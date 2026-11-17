@@ -1,46 +1,28 @@
+<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RigPay</title>
+    <title>RigPay — Heavy Vehicle Hours &amp; Pay Tracker</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
-                    },
-                    colors: {
-                        slate: {
-                            850: '#151e2e',
-                            950: '#0a0f1a',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            overflow-x: hidden;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
         }
-        .tabular-nums {
-            font-variant-numeric: tabular-nums;
-        }
-        /* Custom scrollbar for clean look */
+        /* Custom subtle scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
+            background: #0f172a;
         }
         ::-webkit-scrollbar-thumb {
             background: #334155;
@@ -49,165 +31,134 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #475569;
         }
-        /* Date input calendar icon color fix in dark mode */
-        input[type="date"]::-webkit-calendar-picker-indicator,
-        input[type="time"]::-webkit-calendar-picker-indicator {
-            filter: invert(0.8);
-            cursor: pointer;
+        .bg-slate-850 {
+            background-color: #131c31;
+        }
+        /* Hide number input spinners for cleaner numeric inputs */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-16 overflow-x-hidden selection:bg-amber-500 selection:text-slate-950">
+<body class="min-h-screen bg-slate-950 text-slate-100 antialiased selection:bg-amber-500 selection:text-slate-950 overflow-x-hidden">
 
-    <!-- Top Navigation Header -->
-    <header class="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-lg">
-        <div class="max-w-6xl mx-auto px-3.5 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-3">
-            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
-                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-[#172136] to-[#0a0f1c] border border-slate-700/80 flex items-center justify-center shadow-lg shadow-slate-950/60 shrink-0 overflow-hidden">
-                    <!-- Custom RigPay B-Double & Dollar/Clock Logo SVG -->
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="w-8 h-8 sm:w-9 sm:h-9">
-                        <defs>
-                            <linearGradient id="rigChrome" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#ffffff"/>
-                                <stop offset="55%" stop-color="#cbd5e1"/>
-                                <stop offset="100%" stop-color="#64748b"/>
-                            </linearGradient>
-                        </defs>
-                        <!-- Circular Pay & Time Arc -->
-                        <path d="M13 33 A20 20 0 0 1 26 14" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linecap="round"/>
-                        <path d="M37 14 A20 20 0 0 1 51 33" fill="none" stroke="#64748b" stroke-width="1.6" stroke-linecap="round"/>
-                        <!-- Dollar Symbol -->
-                        <text x="31.5" y="16.5" text-anchor="middle" fill="#e2e8f0" font-family="Inter, sans-serif" font-weight="800" font-size="11">$</text>
-                        <!-- Clock Badge -->
-                        <circle cx="47" cy="21" r="5.5" fill="#0f172a" stroke="#94a3b8" stroke-width="1.4"/>
-                        <polyline points="47,18 47,21 49.2,22.2" fill="none" stroke="#e2e8f0" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                        <!-- Rear Trailer (B-Double) -->
-                        <rect x="44" y="29" width="13" height="12" rx="1.2" fill="url(#rigChrome)"/>
-                        <!-- Lead Trailer (B-Double) -->
-                        <rect x="27" y="27" width="15.5" height="14" rx="1.2" fill="url(#rigChrome)"/>
-                        <!-- Prime Mover Cab & Hood -->
-                        <path d="M16 41 L16 26 Q16 23 19.5 23 L25 23 L25 41 Z" fill="url(#rigChrome)"/>
-                        <path d="M7 41 L7 33.5 Q7 31.5 9.5 31.5 L16 31.5 L16 41 Z" fill="url(#rigChrome)"/>
-                        <!-- Cab Windshield & Grille Accents -->
-                        <rect x="17.5" y="25.5" width="5.5" height="4.5" rx="0.8" fill="#0f172a"/>
-                        <rect x="8.5" y="33.5" width="3.5" height="5.5" rx="0.6" fill="#0f172a"/>
-                        <!-- Road Line -->
-                        <line x1="6" y1="45.5" x2="58" y2="45.5" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round"/>
-                        <!-- Wheels -->
-                        <circle cx="12" cy="42.5" r="2.8" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/>
-                        <circle cx="22.5" cy="42.5" r="2.6" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.4"/>
-                        <circle cx="38.5" cy="42.5" r="2.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.4"/>
-                        <circle cx="52" cy="42.5" r="2.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.4"/>
-                        <!-- RIGPAY Label -->
-                        <text x="32" y="56.5" text-anchor="middle" fill="#ffffff" font-family="Inter, sans-serif" font-weight="800" font-size="9.5" letter-spacing="0.8">RIGPAY</text>
+    <!-- Toast Notification Banner -->
+    <div id="toastBanner" class="fixed bottom-4 right-4 left-4 sm:left-auto z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-slate-800 border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start gap-2.5 text-sm font-semibold">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0"></span>
+            <span id="toastMessage">Saved</span>
+        </div>
+    </div>
+
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-30 bg-slate-950/90 backdrop-blur-md border-b border-slate-800/80">
+        <div class="max-w-6xl mx-auto px-3.5 sm:px-6 h-16 flex items-center justify-between gap-3">
+            <!-- Brand Logo & Title -->
+            <div class="flex items-center gap-2.5 min-w-0">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 flex items-center justify-center shadow-lg shadow-amber-500/20 shrink-0">
+                    <!-- Truck SVG Icon -->
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/>
+                        <path d="M15 18H9"/>
+                        <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/>
+                        <circle cx="17" cy="18" r="2"/>
+                        <circle cx="7" cy="18" r="2"/>
                     </svg>
                 </div>
-                <div class="min-w-0">
-                    <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white flex items-center gap-2 truncate">
-                        RigPay
-                        <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 shrink-0">AUD</span>
-                    </h1>
-                </div>
+                <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white truncate">RigPay</h1>
             </div>
 
-            <div class="flex items-center gap-2 shrink-0">
-                <button id="btnOpenAccountSettings" type="button" title="Settings & Cloud Sync" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="3"/>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                    </svg>
-                    <span class="hidden sm:inline">Settings</span>
-                    <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
-                </button>
-            </div>
+            <!-- Settings Gear Button -->
+            <button type="button" id="btnOpenAccountSettings" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-[0.98] text-slate-200 border border-slate-700/80 text-xs sm:text-sm font-semibold transition shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span>Settings</span>
+            </button>
         </div>
     </header>
 
-    <!-- Toast Notification Banner -->
-    <div id="toastContainer" class="fixed bottom-4 right-3 sm:bottom-5 sm:right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-[calc(100%-1.5rem)] sm:w-[calc(100%-2.5rem)]"></div>
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-3.5 sm:px-6 py-5 sm:py-7 space-y-6">
 
-    <!-- Main Content Container -->
-    <main class="max-w-6xl mx-auto px-3.5 sm:px-6 pt-5 sm:pt-6 space-y-5 sm:space-y-6">
-
-        <!-- Period Filter & Summary Cards Section -->
-        <section aria-label="Earnings Summary" class="space-y-4">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                <div>
-                    <h2 class="text-base font-bold text-slate-200">Pay Period Overview</h2>
-                    <p id="periodRangeLabel" class="text-xs text-slate-400">Showing current week (Mon – Sun)</p>
-                </div>
-                <!-- Responsive Period Selector Grid on Mobile, Flex Row on Larger Screens -->
-                <div class="grid grid-cols-3 sm:flex sm:flex-wrap gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-800 w-full md:w-auto" role="tablist">
-                    <button type="button" data-period="this_week" class="period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 shadow-sm text-center">This Week</button>
-                    <button type="button" data-period="last_week" class="period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800 text-center">Last Week</button>
-                    <button type="button" data-period="fortnight" class="period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800 text-center">Fortnight</button>
-                    <button type="button" data-period="this_month" class="period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800 text-center">This Month</button>
-                    <button type="button" data-period="all" class="period-btn col-span-2 sm:col-span-1 px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800 text-center">All Time</button>
-                </div>
+        <!-- Period Filter Bar & Date Range Label -->
+        <section class="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-4 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-lg">
+            <div class="grid grid-cols-3 sm:grid-cols-5 gap-1.5 sm:gap-2 w-full md:w-auto">
+                <button type="button" data-period="thisWeek" class="period-btn px-3 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow transition">This Week</button>
+                <button type="button" data-period="lastWeek" class="period-btn px-3 py-2 rounded-xl text-xs font-semibold bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800 transition">Last Week</button>
+                <button type="button" data-period="fortnight" class="period-btn px-3 py-2 rounded-xl text-xs font-semibold bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800 transition">Fortnight</button>
+                <button type="button" data-period="thisMonth" class="period-btn px-3 py-2 rounded-xl text-xs font-semibold bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800 transition">This Month</button>
+                <button type="button" data-period="allTime" class="period-btn col-span-2 sm:col-span-1 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800 transition">All Time</button>
             </div>
-
-            <!-- 4 KPI Cards: 1 col on ultra-small phones, 2 cols on phones/tablets, 4 cols on desktop -->
-            <div class="grid grid-cols-1 min-[360px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                <!-- Total Earnings -->
-                <div class="bg-gradient-to-br from-slate-900 to-slate-850 border border-slate-800 rounded-2xl p-3.5 sm:p-5 shadow-md relative overflow-hidden">
-                    <div class="flex items-center justify-between mb-1.5 sm:mb-2 gap-2">
-                        <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Gross Earnings</span>
-                        <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-xs sm:text-sm font-bold shrink-0">$</span>
-                    </div>
-                    <div id="statTotalPay" class="text-xl sm:text-2xl xl:text-3xl font-extrabold text-emerald-400 tabular-nums tracking-tight truncate">$0.00</div>
-                    <div id="statShiftCount" class="text-[11px] sm:text-xs text-slate-400 mt-1">0 shifts logged</div>
-                </div>
-
-                <!-- Total Hours -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-5 shadow-md">
-                    <div class="flex items-center justify-between mb-1.5 sm:mb-2 gap-2">
-                        <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Total Hours</span>
-                        <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                        </span>
-                    </div>
-                    <div id="statTotalHours" class="text-xl sm:text-2xl xl:text-3xl font-extrabold text-white tabular-nums tracking-tight">0.00 <span class="text-xs sm:text-sm font-semibold text-slate-400">hrs</span></div>
-                    <div id="statAvgRate" class="text-[11px] sm:text-xs text-slate-400 mt-1 truncate">Avg: $0.00/hr</div>
-                </div>
-
-                <!-- Standard & Weekend Hours -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-5 shadow-md">
-                    <div class="flex items-center justify-between mb-1.5 sm:mb-2 gap-2">
-                        <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Single / Non-BD</span>
-                        <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-                        </span>
-                    </div>
-                    <div id="statBaseHours" class="text-xl sm:text-2xl xl:text-3xl font-extrabold text-slate-100 tabular-nums tracking-tight">0.00 <span class="text-xs sm:text-sm font-semibold text-slate-400">hrs</span></div>
-                    <div id="statWeekendHoursNote" class="text-[11px] sm:text-xs text-purple-400 mt-1 truncate">0.00 weekend hrs</div>
-                </div>
-
-                <!-- B-Double Hours -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-5 shadow-md">
-                    <div class="flex items-center justify-between mb-1.5 sm:mb-2 gap-2">
-                        <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">B-Double Hours</span>
-                        <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center font-bold text-[11px] sm:text-xs shrink-0">BD</span>
-                    </div>
-                    <div id="statBDHours" class="text-xl sm:text-2xl xl:text-3xl font-extrabold text-amber-400 tabular-nums tracking-tight">0.00 <span class="text-xs sm:text-sm font-semibold text-amber-500/70">hrs</span></div>
-                    <div id="statBDDaysNote" class="text-[11px] sm:text-xs text-slate-400 mt-1 truncate">0 days driving B-Double</div>
-                </div>
+            <div class="flex items-center justify-between md:justify-end gap-2 text-xs text-slate-400 px-1">
+                <span class="uppercase tracking-wider font-semibold text-slate-500">Range:</span>
+                <span id="periodRangeText" class="font-bold text-slate-200 tabular-nums">Current Pay Week</span>
             </div>
         </section>
 
-        <!-- Main Workspace Grid: Left = Shift Logger & Rates, Right = Shift History -->
+        <!-- Summary KPI Cards (4-column responsive grid) -->
+        <section class="grid grid-cols-1 min-[420px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <!-- Gross Earnings -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg min-w-0">
+                <div class="flex items-center justify-between gap-2 mb-1.5">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Gross Earnings</span>
+                    <span class="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-xs font-bold shrink-0">$</span>
+                </div>
+                <div id="kpiGrossPay" class="text-2xl sm:text-3xl font-extrabold text-emerald-400 tabular-nums truncate">$0.00</div>
+                <div id="kpiAvgHourly" class="text-xs text-slate-400 mt-1 tabular-nums">Avg $0.00/hr</div>
+            </div>
+
+            <!-- Total Hours -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg min-w-0">
+                <div class="flex items-center justify-between gap-2 mb-1.5">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Hours</span>
+                    <span class="w-7 h-7 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center text-xs font-bold shrink-0">H</span>
+                </div>
+                <div id="kpiTotalHours" class="text-2xl sm:text-3xl font-extrabold text-white tabular-nums truncate">0.00 hrs</div>
+                <div id="kpiShiftCount" class="text-xs text-slate-400 mt-1 tabular-nums">0 shifts logged</div>
+            </div>
+
+            <!-- B-Double Hours -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg min-w-0">
+                <div class="flex items-center justify-between gap-2 mb-1.5">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-amber-400/90">B-Double Hours</span>
+                    <span class="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center text-[11px] font-extrabold shrink-0">BD</span>
+                </div>
+                <div id="kpiBDHours" class="text-2xl sm:text-3xl font-extrabold text-amber-400 tabular-nums truncate">0.00 hrs</div>
+                <div id="kpiBDAllowance" class="text-xs text-slate-400 mt-1 tabular-nums">+$0.00 BD extra</div>
+            </div>
+
+            <!-- Weekend Hours -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg min-w-0">
+                <div class="flex items-center justify-between gap-2 mb-1.5">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-purple-400/90">Weekend Hours</span>
+                    <span class="w-7 h-7 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center text-[11px] font-extrabold shrink-0">WK</span>
+                </div>
+                <div id="kpiWeekendHours" class="text-2xl sm:text-3xl font-extrabold text-purple-400 tabular-nums truncate">0.00 hrs</div>
+                <div id="kpiWeekendAllowance" class="text-xs text-slate-400 mt-1 tabular-nums">+$0.00 wknd extra</div>
+            </div>
+        </section>
+
+        <!-- Main 2-Column Workspace -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
 
-            <!-- Left Column (5 cols on lg): Shift Logger + Pay Rate Settings -->
+            <!-- Left Column (5 cols on lg): Shift Entry Form + Pay Rates -->
             <div class="lg:col-span-5 space-y-5 sm:space-y-6">
 
-                <!-- 1. Daily Shift Logger Card -->
+                <!-- 1. Log / Edit Shift Card -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
                     <div class="px-4 sm:px-5 py-3.5 sm:py-4 bg-slate-850 border-b border-slate-800 flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2.5">
+                        <div class="flex items-center gap-2 min-w-0">
                             <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
-                            <h2 id="formTitle" class="text-base font-bold text-white">Log Daily Shift</h2>
+                            <h2 id="formTitle" class="text-base font-bold text-white truncate">Log New Shift</h2>
                         </div>
-                        <button id="btnCancelEdit" type="button" class="hidden text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700">
+                        <button type="button" id="btnCancelEdit" class="hidden text-xs font-bold text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2.5 py-1 rounded-lg border border-rose-500/20 transition shrink-0">
                             Cancel Edit
                         </button>
                     </div>
@@ -215,92 +166,83 @@
                     <form id="shiftForm" class="p-4 sm:p-5 space-y-4">
                         <input type="hidden" id="editShiftId" value="">
 
-                        <!-- Date & Day Detection -->
+                        <!-- Date & Weekend Toggle -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="space-y-1.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label for="shiftDate" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Shift Date</label>
+                                    <span id="dayOfWeekBadge" class="text-[11px] font-bold text-amber-400">Today</span>
+                                </div>
+                                <input type="date" id="shiftDate" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-semibold text-sm focus:outline-none focus:border-amber-500 transition">
+                            </div>
+
+                            <!-- Weekend Rate Toggle Box -->
+                            <div class="space-y-1.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Day Rate</span>
+                                    <span id="weekendAutoTag" class="hidden text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">Weekend +$</span>
+                                </div>
+                                <label class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 cursor-pointer select-none">
+                                    <span class="text-xs font-bold text-purple-300">Weekend Shift</span>
+                                    <input type="checkbox" id="isWeekendToggle" class="w-4 h-4 rounded accent-purple-500 cursor-pointer">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Optional Start / Finish Time Calculator -->
+                        <div class="rounded-xl bg-slate-950/80 border border-slate-800/90 p-3 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Quick Time Calculator (Optional)</span>
+                                <span class="text-[11px] text-slate-500">Auto-fills hours</span>
+                            </div>
+                            <div class="grid grid-cols-1 min-[400px]:grid-cols-3 gap-2">
+                                <div>
+                                    <label for="startTime" class="block text-[11px] text-slate-400 mb-1">Start</label>
+                                    <input type="time" id="startTime" class="time-calc-input w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-semibold focus:border-amber-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="endTime" class="block text-[11px] text-slate-400 mb-1">Finish</label>
+                                    <input type="time" id="endTime" class="time-calc-input w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-semibold focus:border-amber-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="breakMinutes" class="block text-[11px] text-slate-400 mb-1">Unpaid Break (m)</label>
+                                    <input type="number" id="breakMinutes" min="0" max="480" step="5" value="30" inputmode="numeric" class="time-calc-input w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-semibold tabular-nums focus:border-amber-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Hours Worked -->
                         <div class="space-y-1.5">
-                            <div class="flex items-center justify-between gap-2">
-                                <label for="shiftDate" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Shift Date</label>
-                                <span id="dayOfWeekBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300">Tuesday</span>
-                            </div>
-                            <input type="date" id="shiftDate" required class="w-full px-3.5 py-3 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm font-medium focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
-                        </div>
-
-                        <!-- Weekend Toggle Switch -->
-                        <div class="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-950/80 border border-slate-800">
-                            <div class="min-w-0">
-                                <div class="text-sm font-semibold text-slate-200 flex flex-wrap items-center gap-1.5">
-                                    <span>Weekend Extra Allowance</span>
-                                    <span id="weekendAutoTag" class="hidden text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">Auto Sat/Sun</span>
-                                </div>
-                                <p class="text-xs text-slate-400">Adds +$/hr weekend top-up to all shift hours</p>
-                            </div>
-                            <label class="relative inline-flex items-center cursor-pointer shrink-0">
-                                <input type="checkbox" id="isWeekendToggle" class="sr-only peer">
-                                <div class="w-12 h-7 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-slate-300 after:rounded-full after:h-5.5 after:w-5.5 after:transition-all peer-checked:bg-purple-600 peer-checked:after:bg-white"></div>
-                            </label>
-                        </div>
-
-                        <!-- Total Hours Worked + Time Calculator Helper -->
-                        <div class="space-y-2">
-                            <div class="flex items-center justify-between gap-2">
-                                <label for="totalHours" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Hours Worked</label>
-                                <button type="button" id="btnToggleTimeCalc" class="text-xs font-semibold text-amber-400 hover:text-amber-300 flex items-center gap-1 shrink-0">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                    Start/Finish Helper
-                                </button>
-                            </div>
-
-                            <!-- Collapsible Start / Finish / Break Calculator (Auto-stacks on narrow screens) -->
-                            <div id="timeCalcPanel" class="hidden p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                                    <div>
-                                        <label for="calcStart" class="block text-[11px] font-medium text-slate-400 mb-1">Start Time</label>
-                                        <input type="time" id="calcStart" value="05:00" class="w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:border-amber-500 focus:outline-none">
-                                    </div>
-                                    <div>
-                                        <label for="calcEnd" class="block text-[11px] font-medium text-slate-400 mb-1">Finish Time</label>
-                                        <input type="time" id="calcEnd" value="16:30" class="w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:border-amber-500 focus:outline-none">
-                                    </div>
-                                    <div>
-                                        <label for="calcBreak" class="block text-[11px] font-medium text-slate-400 mb-1">Unpaid Break (m)</label>
-                                        <input type="number" id="calcBreak" value="30" min="0" step="15" inputmode="numeric" class="w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:border-amber-500 focus:outline-none">
-                                    </div>
-                                </div>
-                                <button type="button" id="btnApplyTimeCalc" class="w-full py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold border border-slate-700 transition">
-                                    Apply Calculated Hours
-                                </button>
-                            </div>
-
+                            <label for="totalHours" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Hours Worked</label>
                             <div class="relative">
-                                <input type="number" id="totalHours" step="0.01" min="0.25" max="24" inputmode="decimal" placeholder="e.g. 11.5" required class="w-full px-3.5 py-3 pr-14 rounded-xl bg-slate-950 border border-slate-700 text-white text-base font-bold tabular-nums focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
-                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">HRS</span>
+                                <input type="number" id="totalHours" step="0.01" min="0.01" max="24" required inputmode="decimal" placeholder="e.g. 11.5" class="w-full px-3.5 py-3 pr-16 rounded-xl bg-slate-950 border border-slate-700 text-white font-extrabold text-base tabular-nums focus:outline-none focus:border-amber-500 transition">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">HOURS</span>
                             </div>
                         </div>
 
-                        <!-- B-Double Toggle & Hours Section -->
-                        <div class="rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors" id="bDoubleBox">
+                        <!-- B-Double Toggle & B-Double Hours Box -->
+                        <div id="bDoubleBox" class="rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors">
                             <div class="flex items-center justify-between gap-3">
-                                <div class="min-w-0">
-                                    <div class="text-sm font-bold text-white flex items-center gap-2">
-                                        Drove B-Double Today?
-                                    </div>
-                                    <p class="text-xs text-slate-400">Toggle ON to specify B-Double hours</p>
+                                <div>
+                                    <div class="text-sm font-bold text-amber-300">Drove B-Double?</div>
+                                    <div class="text-xs text-slate-400">Adds B-Double hourly allowance</div>
                                 </div>
                                 <label class="relative inline-flex items-center cursor-pointer shrink-0">
                                     <input type="checkbox" id="droveBDoubleToggle" class="sr-only peer">
-                                    <div class="w-12 h-7 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[3px] after:left-[3px] after:bg-slate-300 after:rounded-full after:h-5.5 after:w-5.5 after:transition-all peer-checked:bg-amber-500 peer-checked:after:bg-slate-950"></div>
+                                    <div class="w-11 h-6 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500 peer-checked:after:bg-slate-950"></div>
                                 </label>
                             </div>
 
-                            <!-- Conditional B-Double Hours Input -->
-                            <div id="bDoubleHoursWrapper" class="hidden pt-2 border-t border-slate-800/80 space-y-2">
-                                <div class="flex flex-wrap items-center justify-between gap-2">
-                                    <label for="bDoubleHours" class="text-xs font-semibold uppercase tracking-wider text-amber-400">B-Double Hours Driven</label>
-                                    <button type="button" id="btnAllShiftBD" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 border border-amber-500/30 transition">
-                                        All Shift Hours
+                            <!-- Collapsible B-Double Hours Input -->
+                            <div id="bDoubleHoursWrapper" class="hidden pt-2 border-t border-slate-800/90 space-y-2">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label for="bDoubleHours" class="text-xs font-semibold text-amber-200">B-Double Hours Worked</label>
+                                    <button type="button" id="btnAllHoursBD" class="text-[11px] font-bold text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 px-2.5 py-1 rounded-lg border border-amber-500/30 transition">
+                                        Same as Total Hours
                                     </button>
                                 </div>
                                 <div class="relative">
-                                    <input type="number" id="bDoubleHours" step="0.01" min="0" max="24" inputmode="decimal" placeholder="e.g. 8.0" class="w-full px-3.5 py-3 pr-16 rounded-xl bg-slate-900 border border-amber-500/50 text-amber-300 text-base font-bold tabular-nums focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition">
+                                    <input type="number" id="bDoubleHours" step="0.01" min="0" max="24" inputmode="decimal" placeholder="e.g. 8.0" class="w-full px-3.5 py-2.5 pr-16 rounded-xl bg-slate-900 border border-amber-500/40 text-amber-300 font-extrabold text-sm tabular-nums focus:outline-none focus:border-amber-400 transition">
                                     <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-amber-500/70">BD HRS</span>
                                 </div>
                                 <p id="bdValidationMsg" class="hidden text-xs text-rose-400 font-medium">B-Double hours cannot exceed Total Hours Worked.</p>
@@ -338,7 +280,7 @@
                         <div class="flex items-center gap-2.5 min-w-0">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                             <div class="min-w-0">
-                                <h2 class="text-base font-bold text-white">Pay Rates & Top-Ups</h2>
+                                <h2 class="text-base font-bold text-white">Pay Rates &amp; Top-Ups</h2>
                                 <p id="ratesSummarySub" class="text-xs text-slate-400 tabular-nums truncate">Base $36.00 • BD +$6.00 • Wknd +$18.00</p>
                             </div>
                         </div>
@@ -346,7 +288,6 @@
                     </button>
 
                     <div id="ratesPanelBody" class="p-4 sm:p-5 space-y-4">
-                        <!-- 3 Rate Inputs: Stacks on small phones, 3-col on sm+ -->
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
                                 <label for="rateNormal" class="block text-xs font-semibold text-slate-300 mb-1">Ordinary Base ($/hr)</label>
@@ -373,7 +314,7 @@
                             </div>
                         </div>
 
-                        <!-- Live Effective Stacked Rates Preview Badges: 1 col on tiny screens, 2 col on sm+ -->
+                        <!-- Live Effective Stacked Rates Preview Badges -->
                         <div class="rounded-xl bg-slate-950 border border-slate-800 p-3.5 space-y-2">
                             <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Effective Stacked Hourly Rates</div>
                             <div class="grid grid-cols-1 min-[420px]:grid-cols-2 gap-2 text-xs tabular-nums">
@@ -398,7 +339,7 @@
 
                         <!-- Auto-Weekend Detection Setting -->
                         <div class="flex items-center justify-between gap-3 pt-1">
-                            <span class="text-xs font-medium text-slate-300">Auto-detect Sat & Sun for Weekend Top-Up</span>
+                            <span class="text-xs font-medium text-slate-300">Auto-detect Sat &amp; Sun for Weekend Top-Up</span>
                             <label class="relative inline-flex items-center cursor-pointer shrink-0">
                                 <input type="checkbox" id="autoWeekendSetting" checked class="sr-only peer">
                                 <div class="w-10 h-6 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 peer-checked:after:bg-white"></div>
@@ -464,8 +405,8 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
                     </div>
                     <div class="min-w-0">
-                        <h3 class="text-base font-bold text-white truncate">Account & Cloud Sync</h3>
-                        <p class="text-xs text-slate-400 truncate">Save shifts & rates to your account</p>
+                        <h3 class="text-base font-bold text-white truncate">Account &amp; Cloud Sync</h3>
+                        <p class="text-xs text-slate-400 truncate">Save shifts &amp; rates to your account</p>
                     </div>
                 </div>
                 <button type="button" id="btnCloseAccountModal" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0">
@@ -485,7 +426,7 @@
                 </div>
             </div>
 
-            <!-- Inline Google Account Link Form (Shown when external OAuth popup is restricted in preview) -->
+            <!-- Inline Google Account Link Form -->
             <div id="inlineGoogleForm" class="hidden p-4 rounded-xl bg-slate-950 border border-amber-500/40 space-y-3">
                 <div class="flex items-center justify-between">
                     <span class="text-xs font-bold text-amber-400">Link Your Google Account</span>
@@ -500,7 +441,7 @@
                 </button>
             </div>
 
-            <!-- Google Sign-In / Sign-Out Action -->
+            <!-- Google Sign-In & Backup Actions -->
             <div class="space-y-2.5">
                 <button type="button" id="btnGoogleSignIn" class="w-full py-3 px-4 rounded-xl bg-white hover:bg-slate-100 active:scale-[0.99] text-slate-900 font-bold text-sm shadow-md transition flex items-center justify-center gap-2.5">
                     <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
@@ -561,7 +502,7 @@
             </div>
 
             <p class="text-[11px] text-slate-400 leading-relaxed">
-                All shifts and pay rates are automatically backed up to your account whenever you add, edit, or update rates, and any existing device shifts merge seamlessly when you sign in.
+                All shifts and pay rates are automatically backed up whenever you add, edit, or update rates, and any existing device shifts merge seamlessly when you sign in.
             </p>
 
             <!-- Danger Zone: Reset All Shift Data -->
@@ -605,87 +546,122 @@
 
         /**
          * RigPay — Truck Driver Hours & Pay Tracker
-         * Includes Account & Cloud Sync settings with Google Sign-In,
-         * automatic cloud backup, and seamless local shift merging.
+         * Single-file application with B-Double allowances, weekend rates,
+         * configurable pay week start day, CSV/JSON backups, and Google Account sync.
          */
         (function () {
             'use strict';
 
-            // Storage Keys (used for initial migration/cache)
-            const STORAGE_KEY_RATES = 'rigpay_rates_v2';
-            const STORAGE_KEY_SHIFTS = 'rigpay_shifts_v1';
-            const STORAGE_KEY_PROFILE = 'rigpay_google_profile_v1';
-
-            // Default Pay Rates (AUD)
-            const DEFAULT_RATES = {
-                rateNormal: 36.00,
-                rateBDouble: 6.00,
-                rateWeekend: 18.00,
-                autoWeekend: true,
-                weekStartDay: 1 // Monday
+            // --- Storage Keys ---
+            const STORAGE_KEYS = {
+                RATES: 'rigpay_rates_v1',
+                SHIFTS: 'rigpay_shifts_v1',
+                PROFILE: 'rigpay_linked_google_v1'
             };
 
-            // Application State
+            const DEFAULT_RATES = {
+                normalRate: 36.00,
+                bDoubleExtra: 6.00,
+                weekendExtra: 18.00,
+                autoWeekend: true,
+                weekStartDay: 1 // 1 = Monday
+            };
+
+            // --- Firebase Initialization (with seamless offline/standalone fallback) ---
+            let auth = null;
+            let db = null;
+            let currentUser = null;
+            let unsubscribeShifts = null;
+            let unsubscribeRates = null;
+            const appId = typeof __app_id !== 'undefined' ? __app_id : 'rigpay-default';
+
+            try {
+                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
+                    const firebaseConfig = JSON.parse(__firebase_config);
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+                }
+            } catch (e) {
+                console.warn('Running in standalone local storage mode:', e);
+            }
+
+            // --- Application State ---
             let state = {
-                rates: { ...DEFAULT_RATES },
-                shifts: [],
-                currentPeriod: 'this_week',
+                rates: loadLocalRates(),
+                shifts: loadLocalShifts(),
+                linkedProfile: loadLocalProfile(),
+                period: 'thisWeek',
                 filterBDOnly: false,
                 editingId: null
             };
 
-            // Cloud / Auth State
-            let app = null;
-            let auth = null;
-            let db = null;
-            let currentUser = null;
-            let localGoogleProfile = null;
-            let unsubRates = null;
-            let unsubShifts = null;
-            const appId = typeof __app_id !== 'undefined' ? __app_id : 'rigpay-default-app';
-
-            // DOM Element References Cache
+            // --- DOM References ---
             const el = {
-                toastContainer: document.getElementById('toastContainer'),
-                periodRangeLabel: document.getElementById('periodRangeLabel'),
-                periodButtons: document.querySelectorAll('.period-btn'),
-                statTotalPay: document.getElementById('statTotalPay'),
-                statShiftCount: document.getElementById('statShiftCount'),
-                statTotalHours: document.getElementById('statTotalHours'),
-                statAvgRate: document.getElementById('statAvgRate'),
-                statBaseHours: document.getElementById('statBaseHours'),
-                statWeekendHoursNote: document.getElementById('statWeekendHoursNote'),
-                statBDHours: document.getElementById('statBDHours'),
-                statBDDaysNote: document.getElementById('statBDDaysNote'),
-                shiftForm: document.getElementById('shiftForm'),
+                toastBanner: document.getElementById('toastBanner'),
+                toastMessage: document.getElementById('toastMessage'),
+
+                // Header & Modals
+                btnOpenAccountSettings: document.getElementById('btnOpenAccountSettings'),
+                accountModal: document.getElementById('accountModal'),
+                btnCloseAccountModal: document.getElementById('btnCloseAccountModal'),
+                cloudStatusBadge: document.getElementById('cloudStatusBadge'),
+                accountDisplayName: document.getElementById('accountDisplayName'),
+                accountUserSub: document.getElementById('accountUserSub'),
+                btnGoogleSignIn: document.getElementById('btnGoogleSignIn'),
+                btnGoogleSignInText: document.getElementById('btnGoogleSignInText'),
+                inlineGoogleForm: document.getElementById('inlineGoogleForm'),
+                inlineGoogleName: document.getElementById('inlineGoogleName'),
+                inlineGoogleEmail: document.getElementById('inlineGoogleEmail'),
+                btnConfirmInlineGoogle: document.getElementById('btnConfirmInlineGoogle'),
+                btnCancelInlineGoogle: document.getElementById('btnCancelInlineGoogle'),
+                btnSyncNow: document.getElementById('btnSyncNow'),
+                btnExportCsv: document.getElementById('btnExportCsv'),
+                btnExportBackupJson: document.getElementById('btnExportBackupJson'),
+                inputRestoreBackupJson: document.getElementById('inputRestoreBackupJson'),
+                weekStartDaySelect: document.getElementById('weekStartDaySelect'),
+                btnOpenReset: document.getElementById('btnOpenReset'),
+                resetModal: document.getElementById('resetModal'),
+                btnCancelReset: document.getElementById('btnCancelReset'),
+                btnConfirmReset: document.getElementById('btnConfirmReset'),
+
+                // Period & KPIs
+                periodRangeText: document.getElementById('periodRangeText'),
+                kpiGrossPay: document.getElementById('kpiGrossPay'),
+                kpiAvgHourly: document.getElementById('kpiAvgHourly'),
+                kpiTotalHours: document.getElementById('kpiTotalHours'),
+                kpiShiftCount: document.getElementById('kpiShiftCount'),
+                kpiBDHours: document.getElementById('kpiBDHours'),
+                kpiBDAllowance: document.getElementById('kpiBDAllowance'),
+                kpiWeekendHours: document.getElementById('kpiWeekendHours'),
+                kpiWeekendAllowance: document.getElementById('kpiWeekendAllowance'),
+
+                // Shift Form
                 formTitle: document.getElementById('formTitle'),
                 btnCancelEdit: document.getElementById('btnCancelEdit'),
+                shiftForm: document.getElementById('shiftForm'),
                 editShiftId: document.getElementById('editShiftId'),
                 shiftDate: document.getElementById('shiftDate'),
                 dayOfWeekBadge: document.getElementById('dayOfWeekBadge'),
                 isWeekendToggle: document.getElementById('isWeekendToggle'),
                 weekendAutoTag: document.getElementById('weekendAutoTag'),
-                btnToggleTimeCalc: document.getElementById('btnToggleTimeCalc'),
-                timeCalcPanel: document.getElementById('timeCalcPanel'),
-                calcStart: document.getElementById('calcStart'),
-                calcEnd: document.getElementById('calcEnd'),
-                calcBreak: document.getElementById('calcBreak'),
-                btnApplyTimeCalc: document.getElementById('btnApplyTimeCalc'),
+                startTime: document.getElementById('startTime'),
+                endTime: document.getElementById('endTime'),
+                breakMinutes: document.getElementById('breakMinutes'),
                 totalHours: document.getElementById('totalHours'),
-                droveBDoubleToggle: document.getElementById('droveBDoubleToggle'),
                 bDoubleBox: document.getElementById('bDoubleBox'),
+                droveBDoubleToggle: document.getElementById('droveBDoubleToggle'),
                 bDoubleHoursWrapper: document.getElementById('bDoubleHoursWrapper'),
-                btnAllShiftBD: document.getElementById('btnAllShiftBD'),
                 bDoubleHours: document.getElementById('bDoubleHours'),
+                btnAllHoursBD: document.getElementById('btnAllHoursBD'),
                 bdValidationMsg: document.getElementById('bdValidationMsg'),
                 shiftNotes: document.getElementById('shiftNotes'),
                 previewTotalPay: document.getElementById('previewTotalPay'),
                 previewBreakdownLines: document.getElementById('previewBreakdownLines'),
-                btnSaveShift: document.getElementById('btnSaveShift'),
                 btnSaveShiftText: document.getElementById('btnSaveShiftText'),
-                btnToggleRatesAccordion: document.getElementById('btnToggleRatesAccordion'),
+
+                // Rates Card
                 ratesSummarySub: document.getElementById('ratesSummarySub'),
-                ratesPanelBody: document.getElementById('ratesPanelBody'),
                 rateNormal: document.getElementById('rateNormal'),
                 rateBDouble: document.getElementById('rateBDouble'),
                 rateWeekend: document.getElementById('rateWeekend'),
@@ -694,868 +670,711 @@
                 effWeekendBase: document.getElementById('effWeekendBase'),
                 effWeekendBD: document.getElementById('effWeekendBD'),
                 autoWeekendSetting: document.getElementById('autoWeekendSetting'),
-                filterBDOnly: document.getElementById('filterBDOnly'),
-                shiftListContainer: document.getElementById('shiftListContainer'),
+
+                // History Log
                 historySubtitle: document.getElementById('historySubtitle'),
-                resetModal: document.getElementById('resetModal'),
-                btnOpenReset: document.getElementById('btnOpenReset'),
-                btnCancelReset: document.getElementById('btnCancelReset'),
-                btnConfirmReset: document.getElementById('btnConfirmReset'),
-                btnOpenAccountSettings: document.getElementById('btnOpenAccountSettings'),
-                accountModal: document.getElementById('accountModal'),
-                btnCloseAccountModal: document.getElementById('btnCloseAccountModal'),
-                cloudStatusDot: document.getElementById('cloudStatusDot'),
-                cloudStatusBadge: document.getElementById('cloudStatusBadge'),
-                accountDisplayName: document.getElementById('accountDisplayName'),
-                accountUserSub: document.getElementById('accountUserSub'),
-                inlineGoogleForm: document.getElementById('inlineGoogleForm'),
-                inlineGoogleName: document.getElementById('inlineGoogleName'),
-                inlineGoogleEmail: document.getElementById('inlineGoogleEmail'),
-                btnCancelInlineGoogle: document.getElementById('btnCancelInlineGoogle'),
-                btnConfirmInlineGoogle: document.getElementById('btnConfirmInlineGoogle'),
-                btnGoogleSignIn: document.getElementById('btnGoogleSignIn'),
-                btnGoogleSignInText: document.getElementById('btnGoogleSignInText'),
-                btnSyncNow: document.getElementById('btnSyncNow'),
-                btnExportBackupJson: document.getElementById('btnExportBackupJson'),
-                inputRestoreBackupJson: document.getElementById('inputRestoreBackupJson'),
-                weekStartDaySelect: document.getElementById('weekStartDaySelect')
+                filterBDOnly: document.getElementById('filterBDOnly'),
+                shiftListContainer: document.getElementById('shiftListContainer')
             };
 
-            // Persistence Layer (Cloud + Local Fallback)
-            function loadLocalCache() {
+            // --- Local Storage Persistence ---
+            function loadLocalRates() {
                 try {
-                    const savedRates = localStorage.getItem(STORAGE_KEY_RATES);
-                    if (savedRates) {
-                        state.rates = { ...DEFAULT_RATES, ...JSON.parse(savedRates) };
-                    }
-                    const savedShifts = localStorage.getItem(STORAGE_KEY_SHIFTS);
-                    if (savedShifts) {
-                        const parsed = JSON.parse(savedShifts);
-                        if (Array.isArray(parsed)) {
-                            state.shifts = parsed;
-                        }
-                    }
-                    const savedProfile = localStorage.getItem(STORAGE_KEY_PROFILE);
-                    if (savedProfile) {
-                        localGoogleProfile = JSON.parse(savedProfile);
-                    }
-                } catch (err) {
-                    console.error('Failed to load cached data:', err);
+                    const raw = localStorage.getItem(STORAGE_KEYS.RATES);
+                    if (!raw) return { ...DEFAULT_RATES };
+                    return { ...DEFAULT_RATES, ...JSON.parse(raw) };
+                } catch (e) {
+                    return { ...DEFAULT_RATES };
+                }
+            }
+
+            function loadLocalShifts() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEYS.SHIFTS);
+                    if (!raw) return [];
+                    const parsed = JSON.parse(raw);
+                    return Array.isArray(parsed) ? parsed : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function loadLocalProfile() {
+                try {
+                    const raw = localStorage.getItem(STORAGE_KEYS.PROFILE);
+                    return raw ? JSON.parse(raw) : null;
+                } catch (e) {
+                    return null;
                 }
             }
 
             function saveLocalCache() {
                 try {
-                    localStorage.setItem(STORAGE_KEY_RATES, JSON.stringify(state.rates));
-                    localStorage.setItem(STORAGE_KEY_SHIFTS, JSON.stringify(state.shifts));
-                    if (localGoogleProfile) {
-                        localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(localGoogleProfile));
+                    localStorage.setItem(STORAGE_KEYS.RATES, JSON.stringify(state.rates));
+                    localStorage.setItem(STORAGE_KEYS.SHIFTS, JSON.stringify(state.shifts));
+                    if (state.linkedProfile) {
+                        localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(state.linkedProfile));
                     } else {
-                        localStorage.removeItem(STORAGE_KEY_PROFILE);
+                        localStorage.removeItem(STORAGE_KEYS.PROFILE);
                     }
-                } catch (err) {
-                    console.error('Failed to update local cache:', err);
+                } catch (e) {
+                    console.warn('Local storage save warning:', e);
                 }
             }
 
-            async function uploadAllLocalShiftsToCloud(showNotification = false) {
-                saveLocalCache();
-                if (!db || !currentUser) {
-                    if (showNotification) {
-                        const acctLabel = localGoogleProfile ? ` (${localGoogleProfile.email})` : '';
-                        showToast(`Backed up ${state.shifts.length} shifts & pay rates${acctLabel}`);
-                    }
-                    return;
-                }
-                try {
-                    const batch = writeBatch(db);
-                    const ratesRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'rates');
-                    batch.set(ratesRef, { ...state.rates, updatedAt: Date.now() }, { merge: true });
-
-                    state.shifts.forEach(shift => {
-                        if (shift && shift.id) {
-                            const shiftRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'shifts', shift.id);
-                            batch.set(shiftRef, shift, { merge: true });
-                        }
-                    });
-                    await batch.commit();
-                    if (showNotification) {
-                        showToast(`Backed up ${state.shifts.length} shifts & pay rates to cloud`);
-                    }
-                } catch (err) {
-                    console.error('Batch cloud upload failed:', err);
-                    if (showNotification) showToast('Saved locally & queued for cloud sync');
-                }
+            // --- Formatting & Date Helpers ---
+            function formatAUD(val) {
+                const num = Number(val) || 0;
+                return new Intl.NumberFormat('en-AU', {
+                    style: 'currency',
+                    currency: 'AUD',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(num);
             }
 
-            function updateAccountModalUI() {
-                const firebaseGoogle = currentUser && (currentUser.providerData || []).find(p => p.providerId === 'google.com');
-                if (firebaseGoogle || localGoogleProfile) {
-                    const displayName = (firebaseGoogle && firebaseGoogle.displayName) || (localGoogleProfile && localGoogleProfile.name) || 'Google Account';
-                    const email = (firebaseGoogle && firebaseGoogle.email) || (localGoogleProfile && localGoogleProfile.email) || '';
-                    el.cloudStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
-                    el.cloudStatusBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
-                    el.cloudStatusBadge.textContent = firebaseGoogle ? 'Google Synced' : 'Google Linked';
-                    el.accountDisplayName.textContent = displayName;
-                    el.accountUserSub.textContent = email || (currentUser ? `User ID: ${currentUser.uid}` : 'Saved to Google profile');
-                    el.btnGoogleSignInText.textContent = 'Sign Out of Google';
-                    el.inlineGoogleForm.classList.add('hidden');
-                    return;
-                }
-
-                if (currentUser) {
-                    el.cloudStatusDot.className = 'w-2 h-2 rounded-full bg-amber-400';
-                    el.cloudStatusBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30';
-                    el.cloudStatusBadge.textContent = 'Device Sync Active';
-                    el.accountDisplayName.textContent = 'Device Session';
-                    el.accountUserSub.textContent = `Account ID: ${currentUser.uid}`;
-                    el.btnGoogleSignInText.textContent = 'Sign in with Google';
-                    return;
-                }
-
-                el.cloudStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400';
-                el.cloudStatusBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-emerald-300 border border-emerald-500/30';
-                el.cloudStatusBadge.textContent = 'Local Auto-Save';
-                el.accountDisplayName.textContent = 'Device Storage Active';
-                el.accountUserSub.textContent = 'Sign in with Google below to link your email & back up shifts.';
-                el.btnGoogleSignInText.textContent = 'Sign in with Google';
-            }
-
-            async function handleGoogleButtonClick() {
-                const isGoogleConnected = (currentUser && (currentUser.providerData || []).some(p => p.providerId === 'google.com')) || Boolean(localGoogleProfile);
-                if (isGoogleConnected) {
-                    localGoogleProfile = null;
-                    saveLocalCache();
-                    if (auth && currentUser && (currentUser.providerData || []).some(p => p.providerId === 'google.com')) {
-                        try {
-                            await signOut(auth);
-                            await signInAnonymously(auth);
-                        } catch (err) {
-                            console.error('Sign out error:', err);
-                        }
-                    }
-                    updateAccountModalUI();
-                    showToast('Signed out of Google');
-                    return;
-                }
-
-                if (!auth) {
-                    el.inlineGoogleForm.classList.remove('hidden');
-                    el.inlineGoogleEmail.focus();
-                    return;
-                }
-
-                const provider = new GoogleAuthProvider();
-                try {
-                    if (currentUser && currentUser.isAnonymous) {
-                        try {
-                            await linkWithPopup(currentUser, provider);
-                        } catch (linkErr) {
-                            if (linkErr.code === 'auth/credential-already-in-use' || linkErr.code === 'auth/email-already-in-use') {
-                                await signInWithPopup(auth, provider);
-                            } else {
-                                throw linkErr;
-                            }
-                        }
-                    } else {
-                        await signInWithPopup(auth, provider);
-                    }
-                    await uploadAllLocalShiftsToCloud(false);
-                    updateAccountModalUI();
-                    showToast('Signed in with Google & synced!');
-                } catch (err) {
-                    console.error('Google sign-in popup fallback:', err);
-                    if (err.code !== 'auth/popup-closed-by-user') {
-                        el.inlineGoogleForm.classList.remove('hidden');
-                        el.inlineGoogleEmail.focus();
-                    }
-                }
-            }
-
-            // Toast helper
-            function showToast(message, type = 'success') {
-                const toast = document.createElement('div');
-                toast.className = `p-3.5 rounded-xl shadow-xl text-xs font-semibold text-white border flex items-center justify-between gap-3 pointer-events-auto transition-all transform translate-y-2 opacity-0 ${
-                    type === 'error' ? 'bg-rose-900/90 border-rose-700' : 'bg-slate-900/95 border-slate-700'
-                }`;
-                toast.innerHTML = `<span>${escapeHtml(message)}</span><span class="w-2 h-2 rounded-full ${type === 'error' ? 'bg-rose-400' : 'bg-emerald-400'} shrink-0"></span>`;
-                el.toastContainer.appendChild(toast);
-                requestAnimationFrame(() => {
-                    toast.classList.remove('translate-y-2', 'opacity-0');
-                });
-                setTimeout(() => {
-                    toast.classList.add('translate-y-2', 'opacity-0');
-                    setTimeout(() => toast.remove(), 300);
-                }, 3500);
-            }
-
-            function escapeHtml(str) {
-                return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-            }
-
-            function formatAUD(amount) {
-                return new Intl.NumberFormat('en-AU', { style: 'currency', currency: 'AUD' }).format(amount || 0);
-            }
-
-            function formatHours(hrs) {
-                return Number(hrs || 0).toFixed(2);
+            function formatHours(val) {
+                const num = Number(val) || 0;
+                return `${num.toFixed(2)} hrs`;
             }
 
             function getTodayISO() {
-                const d = new Date();
-                const year = d.getFullYear();
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;
+                const now = new Date();
+                const y = now.getFullYear();
+                const m = String(now.getMonth() + 1).padStart(2, '0');
+                const d = String(now.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
             }
 
             function parseLocalDate(isoStr) {
-                const [y, m, d] = String(isoStr).split('-').map(Number);
-                return new Date(y, m - 1, d);
+                if (!isoStr || typeof isoStr !== 'string') return new Date();
+                const parts = isoStr.split('-').map(Number);
+                if (parts.length !== 3) return new Date();
+                return new Date(parts[0], parts[1] - 1, parts[2]);
             }
 
             function formatDisplayDate(isoStr) {
-                if (!isoStr) return '';
                 const d = parseLocalDate(isoStr);
-                return d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+                return d.toLocaleDateString('en-AU', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
             }
 
-            // Calculation Logic
-            function calculateShiftPay(totalHours, bDoubleHours, isWeekend) {
-                totalHours = Math.max(0, Number(totalHours) || 0);
-                bDoubleHours = Math.max(0, Math.min(totalHours, Number(bDoubleHours) || 0));
+            function escapeHtml(str) {
+                return String(str || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
 
-                const normalRate = Number(state.rates.rateNormal) || 0;
-                const bdExtra = Number(state.rates.rateBDouble) || 0;
-                const wkndExtra = Number(state.rates.rateWeekend) || 0;
+            let toastTimer = null;
+            function showToast(msg) {
+                if (!el.toastBanner || !el.toastMessage) return;
+                el.toastMessage.textContent = msg;
+                el.toastBanner.classList.remove('translate-y-24', 'opacity-0');
+                if (toastTimer) clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    el.toastBanner.classList.add('translate-y-24', 'opacity-0');
+                }, 2800);
+            }
 
-                const basePay = totalHours * normalRate;
-                const bdPay = bDoubleHours * bdExtra;
-                const wkndPay = isWeekend ? (totalHours * wkndExtra) : 0;
-                const totalPay = basePay + bdPay + wkndPay;
+            // --- Core Pay Calculation Engine ---
+            function calculateShiftPay(shift, rates = state.rates) {
+                const totalHours = Math.max(0, Number(shift.totalHours) || 0);
+                const rawBD = Math.max(0, Number(shift.bDoubleHours) || 0);
+                const bDoubleHours = Math.min(totalHours, rawBD);
+                const normalHours = Math.max(0, totalHours - bDoubleHours);
+                const isWeekend = Boolean(shift.isWeekend);
+
+                const baseRate = Math.max(0, Number(rates.normalRate) || 0);
+                const bdExtraRate = Math.max(0, Number(rates.bDoubleExtra) || 0);
+                const wkndExtraRate = isWeekend ? Math.max(0, Number(rates.weekendExtra) || 0) : 0;
+
+                const basePay = totalHours * baseRate;
+                const bdAllowancePay = bDoubleHours * bdExtraRate;
+                const weekendAllowancePay = totalHours * wkndExtraRate;
+                const totalPay = basePay + bdAllowancePay + weekendAllowancePay;
 
                 return {
+                    totalHours,
+                    normalHours,
+                    bDoubleHours,
+                    isWeekend,
+                    baseRate,
+                    bdExtraRate,
+                    wkndExtraRate,
                     basePay,
-                    bdPay,
-                    wkndPay,
+                    bdAllowancePay,
+                    weekendAllowancePay,
                     totalPay
                 };
             }
 
+            // --- Period Date Bounds (Respects Custom Week Start Day) ---
             function getPeriodBounds(periodKey) {
                 const now = new Date();
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                const startDayOfWeek = Number(state.rates.weekStartDay) !== undefined ? Number(state.rates.weekStartDay) : 1;
+                const weekStartDay = Number(state.rates.weekStartDay ?? 1); // 0=Sun..6=Sat
+                const diffToStart = (today.getDay() - weekStartDay + 7) % 7;
 
-                let start = new Date(today);
-                let end = new Date(today);
+                const startOfThisWeek = new Date(today);
+                startOfThisWeek.setDate(today.getDate() - diffToStart);
+                const endOfThisWeek = new Date(startOfThisWeek);
+                endOfThisWeek.setDate(startOfThisWeek.getDate() + 6);
 
-                const currentDay = today.getDay();
-                let diffToStart = currentDay - startDayOfWeek;
-                if (diffToStart < 0) diffToStart += 7;
-
-                if (periodKey === 'this_week') {
-                    start.setDate(today.getDate() - diffToStart);
-                    end = new Date(start);
-                    end.setDate(start.getDate() + 6);
-                } else if (periodKey === 'last_week') {
-                    start.setDate(today.getDate() - diffToStart - 7);
-                    end = new Date(start);
-                    end.setDate(start.getDate() + 6);
-                } else if (periodKey === 'fortnight') {
-                    start.setDate(today.getDate() - diffToStart - 7);
-                    end = new Date(start);
-                    end.setDate(start.getDate() + 13);
-                } else if (periodKey === 'this_month') {
-                    start = new Date(today.getFullYear(), today.getMonth(), 1);
-                    end = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-                } else {
-                    start = new Date(2020, 0, 1);
-                    end = new Date(2035, 11, 31);
+                if (periodKey === 'thisWeek') {
+                    return {
+                        start: startOfThisWeek,
+                        end: endOfThisWeek,
+                        label: `${startOfThisWeek.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })} – ${endOfThisWeek.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}`
+                    };
                 }
-                return { start, end };
+
+                if (periodKey === 'lastWeek') {
+                    const startLast = new Date(startOfThisWeek);
+                    startLast.setDate(startOfThisWeek.getDate() - 7);
+                    const endLast = new Date(startOfThisWeek);
+                    endLast.setDate(startOfThisWeek.getDate() - 1);
+                    return {
+                        start: startLast,
+                        end: endLast,
+                        label: `${startLast.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })} – ${endLast.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}`
+                    };
+                }
+
+                if (periodKey === 'fortnight') {
+                    const startFortnight = new Date(startOfThisWeek);
+                    startFortnight.setDate(startOfThisWeek.getDate() - 7);
+                    return {
+                        start: startFortnight,
+                        end: endOfThisWeek,
+                        label: `${startFortnight.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })} – ${endOfThisWeek.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}`
+                    };
+                }
+
+                if (periodKey === 'thisMonth') {
+                    const startMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                    const endMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    return {
+                        start: startMonth,
+                        end: endMonth,
+                        label: startMonth.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })
+                    };
+                }
+
+                return { start: null, end: null, label: 'All Recorded Shifts' };
             }
 
-            function syncRatesUI() {
-                el.rateNormal.value = state.rates.rateNormal;
-                el.rateBDouble.value = state.rates.rateBDouble;
-                el.rateWeekend.value = state.rates.rateWeekend;
-                el.autoWeekendSetting.checked = Boolean(state.rates.autoWeekend);
-                el.weekStartDaySelect.value = String(state.rates.weekStartDay ?? 1);
+            function getFilteredShifts() {
+                const bounds = getPeriodBounds(state.period);
+                return state.shifts
+                    .filter(s => {
+                        if (state.filterBDOnly && !(Number(s.bDoubleHours) > 0)) return false;
+                        if (bounds.start && bounds.end) {
+                            const d = parseLocalDate(s.date);
+                            if (d < bounds.start || d > bounds.end) return false;
+                        }
+                        return true;
+                    })
+                    .sort((a, b) => {
+                        if (a.date !== b.date) return b.date.localeCompare(a.date);
+                        return (b.updatedAt || 0) - (a.updatedAt || 0);
+                    });
+            }
 
-                const base = Number(state.rates.rateNormal) || 0;
-                const bd = Number(state.rates.rateBDouble) || 0;
-                const wknd = Number(state.rates.rateWeekend) || 0;
+            // --- Cloud Sync Helpers ---
+            async function syncRatesToCloud() {
+                saveLocalCache();
+                if (!db || !currentUser) return;
+                try {
+                    await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'rates'), {
+                        ...state.rates,
+                        updatedAt: Date.now()
+                    }, { merge: true });
+                } catch (err) {
+                    console.warn('Cloud rates sync deferred:', err);
+                }
+            }
 
-                el.ratesSummarySub.textContent = `Base $${base.toFixed(2)} • BD +$${bd.toFixed(2)} • Wknd +$${wknd.toFixed(2)}`;
+            async function syncShiftToCloud(shift) {
+                saveLocalCache();
+                if (!db || !currentUser) return;
+                try {
+                    await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'shifts', shift.id), shift, { merge: true });
+                } catch (err) {
+                    console.warn('Cloud shift sync deferred:', err);
+                }
+            }
 
-                el.effWeekdayBase.textContent = formatAUD(base) + '/hr';
-                el.effWeekdayBD.textContent = formatAUD(base + bd) + '/hr';
-                el.effWeekendBase.textContent = formatAUD(base + wknd) + '/hr';
-                el.effWeekendBD.textContent = formatAUD(base + bd + wknd) + '/hr';
+            async function pushAllLocalToCloud() {
+                saveLocalCache();
+                if (!db || !currentUser) return;
+                try {
+                    const batch = writeBatch(db);
+                    batch.set(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'settings', 'rates'), {
+                        ...state.rates,
+                        updatedAt: Date.now()
+                    }, { merge: true });
+                    state.shifts.forEach(s => {
+                        batch.set(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'shifts', s.id), s, { merge: true });
+                    });
+                    await batch.commit();
+                } catch (err) {
+                    console.warn('Batch sync warning:', err);
+                }
+            }
 
-                updateLivePreview();
+            function updateAccountUI() {
+                const isFirebaseGoogle = currentUser && !currentUser.isAnonymous;
+                const linked = state.linkedProfile;
+
+                if (isFirebaseGoogle || linked) {
+                    const name = isFirebaseGoogle ? (currentUser.displayName || 'Google Account') : (linked.name || 'Google Account');
+                    const email = isFirebaseGoogle ? (currentUser.email || 'Cloud synced') : (linked.email || 'Account linked');
+
+                    if (el.cloudStatusBadge) {
+                        el.cloudStatusBadge.textContent = isFirebaseGoogle ? 'Cloud Connected' : 'Account Linked';
+                        el.cloudStatusBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                    }
+                    if (el.accountDisplayName) el.accountDisplayName.textContent = name;
+                    if (el.accountUserSub) el.accountUserSub.textContent = email;
+                    if (el.btnGoogleSignInText) el.btnGoogleSignInText.textContent = 'Sign Out / Switch Account';
+                } else {
+                    if (el.cloudStatusBadge) {
+                        el.cloudStatusBadge.textContent = currentUser ? 'Auto-Saved' : 'Device Saved';
+                        el.cloudStatusBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30';
+                    }
+                    if (el.accountDisplayName) el.accountDisplayName.textContent = 'Local Device Storage';
+                    if (el.accountUserSub) el.accountUserSub.textContent = 'Connect Google to link your profile or export a backup file anytime.';
+                    if (el.btnGoogleSignInText) el.btnGoogleSignInText.textContent = 'Sign in with Google';
+                }
+            }
+
+            function attachCloudListeners(user) {
+                if (unsubscribeShifts) { unsubscribeShifts(); unsubscribeShifts = null; }
+                if (unsubscribeRates) { unsubscribeRates(); unsubscribeRates = null; }
+                if (!db || !user) return;
+
+                const ratesRef = doc(db, 'artifacts', appId, 'users', user.uid, 'settings', 'rates');
+                unsubscribeRates = onSnapshot(ratesRef, (snap) => {
+                    if (snap.exists()) {
+                        state.rates = { ...state.rates, ...snap.data() };
+                        saveLocalCache();
+                        syncRateInputsFromState();
+                        renderDashboard();
+                    } else {
+                        syncRatesToCloud();
+                    }
+                }, (err) => console.warn('Rates snapshot listener:', err));
+
+                const shiftsCol = collection(db, 'artifacts', appId, 'users', user.uid, 'shifts');
+                unsubscribeShifts = onSnapshot(shiftsCol, (snapshot) => {
+                    if (snapshot.empty && state.shifts.length > 0) {
+                        pushAllLocalToCloud();
+                        return;
+                    }
+                    const cloudMap = new Map();
+                    snapshot.forEach(docSnap => {
+                        cloudMap.set(docSnap.id, { id: docSnap.id, ...docSnap.data() });
+                    });
+                    // Merge any local-only shifts
+                    let hasLocalOnly = false;
+                    state.shifts.forEach(localShift => {
+                        if (!cloudMap.has(localShift.id)) {
+                            cloudMap.set(localShift.id, localShift);
+                            hasLocalOnly = true;
+                        }
+                    });
+                    state.shifts = Array.from(cloudMap.values());
+                    saveLocalCache();
+                    renderDashboard();
+                    if (hasLocalOnly) pushAllLocalToCloud();
+                }, (err) => console.warn('Shifts snapshot listener:', err));
+            }
+
+            // Initialize Firebase Auth if available
+            if (auth) {
+                onAuthStateChanged(auth, (user) => {
+                    currentUser = user;
+                    updateAccountUI();
+                    if (user) {
+                        attachCloudListeners(user);
+                    }
+                });
+
+                (async () => {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else if (!auth.currentUser) {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (err) {
+                        console.warn('Auth init fallback to local storage:', err);
+                        updateAccountUI();
+                    }
+                })();
+            } else {
+                updateAccountUI();
+            }
+
+            // --- UI Rendering ---
+            function syncRateInputsFromState() {
+                if (el.rateNormal) el.rateNormal.value = Number(state.rates.normalRate).toFixed(2);
+                if (el.rateBDouble) el.rateBDouble.value = Number(state.rates.bDoubleExtra).toFixed(2);
+                if (el.rateWeekend) el.rateWeekend.value = Number(state.rates.weekendExtra).toFixed(2);
+                if (el.autoWeekendSetting) el.autoWeekendSetting.checked = Boolean(state.rates.autoWeekend);
+                if (el.weekStartDaySelect) el.weekStartDaySelect.value = String(state.rates.weekStartDay ?? 1);
+                updateEffectiveRatesDisplay();
+            }
+
+            function updateEffectiveRatesDisplay() {
+                const base = Math.max(0, Number(state.rates.normalRate) || 0);
+                const bd = Math.max(0, Number(state.rates.bDoubleExtra) || 0);
+                const wk = Math.max(0, Number(state.rates.weekendExtra) || 0);
+
+                if (el.ratesSummarySub) {
+                    el.ratesSummarySub.textContent = `Base ${formatAUD(base)} • BD +${formatAUD(bd)} • Wknd +${formatAUD(wk)}`;
+                }
+                if (el.effWeekdayBase) el.effWeekdayBase.textContent = `${formatAUD(base)}/hr`;
+                if (el.effWeekdayBD) el.effWeekdayBD.textContent = `${formatAUD(base + bd)}/hr`;
+                if (el.effWeekendBase) el.effWeekendBase.textContent = `${formatAUD(base + wk)}/hr`;
+                if (el.effWeekendBD) el.effWeekendBD.textContent = `${formatAUD(base + bd + wk)}/hr`;
             }
 
             function updateLivePreview() {
-                const totalHours = parseFloat(el.totalHours.value) || 0;
-                const droveBD = el.droveBDoubleToggle.checked;
-                const bDoubleHours = droveBD ? (parseFloat(el.bDoubleHours.value) || totalHours) : 0;
-                const isWeekend = el.isWeekendToggle.checked;
+                const totalHours = Math.max(0, parseFloat(el.totalHours?.value) || 0);
+                const droveBD = Boolean(el.droveBDoubleToggle?.checked);
+                const bDoubleHours = droveBD ? Math.max(0, parseFloat(el.bDoubleHours?.value) || 0) : 0;
+                const isWeekend = Boolean(el.isWeekendToggle?.checked);
 
-                const breakdown = calculateShiftPay(totalHours, bDoubleHours, isWeekend);
-                el.previewTotalPay.textContent = formatAUD(breakdown.totalPay);
+                if (droveBD && bDoubleHours > totalHours && totalHours > 0) {
+                    el.bdValidationMsg?.classList.remove('hidden');
+                } else {
+                    el.bdValidationMsg?.classList.add('hidden');
+                }
 
-                let lines = [];
-                lines.innerHTML = '';
+                const calc = calculateShiftPay({ totalHours, bDoubleHours, isWeekend });
+                if (el.previewTotalPay) el.previewTotalPay.textContent = formatAUD(calc.totalPay);
+
+                if (!el.previewBreakdownLines) return;
                 if (totalHours <= 0) {
-                    el.previewBreakdownLines.innerHTML = `<div>Enter hours worked to preview pay breakdown.</div>`;
+                    el.previewBreakdownLines.innerHTML = '<div>Enter hours worked to preview pay breakdown.</div>';
                     return;
                 }
 
-                lines.push(`<div>Ordinary Base Pay (${formatHours(totalHours)} hrs @ ${formatAUD(state.rates.rateNormal)}/hr): <span class="text-white font-semibold">${formatAUD(breakdown.basePay)}</span></div>`);
-                if (bDoubleHours > 0) {
-                    lines.push(`<div>B-Double Extra (${formatHours(bDoubleHours)} hrs @ +${formatAUD(state.rates.rateBDouble)}/hr): <span class="text-amber-300 font-semibold">+${formatAUD(breakdown.bdPay)}</span></div>`);
+                const lines = [];
+                lines.push(`<div class="flex justify-between"><span>Base (${calc.totalHours.toFixed(2)}h × ${formatAUD(calc.baseRate)})</span><span class="text-slate-200 font-semibold">${formatAUD(calc.basePay)}</span></div>`);
+                if (calc.bDoubleHours > 0) {
+                    lines.push(`<div class="flex justify-between text-amber-400"><span>B-Double Extra (${calc.bDoubleHours.toFixed(2)}h × +${formatAUD(calc.bdExtraRate)})</span><span class="font-semibold">+${formatAUD(calc.bdAllowancePay)}</span></div>`);
                 }
-                if (isWeekend && breakdown.wkndPay > 0) {
-                    lines.push(`<div>Weekend Extra (${formatHours(totalHours)} hrs @ +${formatAUD(state.rates.rateWeekend)}/hr): <span class="text-purple-300 font-semibold">+${formatAUD(breakdown.wkndPay)}</span></div>`);
+                if (calc.isWeekend) {
+                    lines.push(`<div class="flex justify-between text-purple-400"><span>Weekend Extra (${calc.totalHours.toFixed(2)}h × +${formatAUD(calc.wkndExtraRate)})</span><span class="font-semibold">+${formatAUD(calc.weekendAllowancePay)}</span></div>`);
                 }
                 el.previewBreakdownLines.innerHTML = lines.join('');
             }
 
             function renderDashboard() {
-                const { start, end } = getPeriodBounds(state.currentPeriod);
-                const filteredShifts = state.shifts.filter(s => {
-                    const d = parseLocalDate(s.date);
-                    if (d < start || d > end) return false;
-                    if (state.filterBDOnly && Number(s.bDoubleHours || 0) <= 0) return false;
-                    return true;
-                });
+                const bounds = getPeriodBounds(state.period);
+                if (el.periodRangeText) el.periodRangeText.textContent = bounds.label;
 
-                let totalPay = 0;
-                let totalHours = 0;
-                let baseHours = 0;
-                let bdHours = 0;
-                let weekendHours = 0;
-                let bdDaysCount = 0;
-
-                filteredShifts.forEach(s => {
-                    const th = Number(s.totalHours) || 0;
-                    const bdh = Number(s.bDoubleHours) || 0;
-                    const isWk = Boolean(s.isWeekend);
-                    const calc = calculateShiftPay(th, bdh, isWk);
-
-                    totalPay += calc.totalPay;
-                    totalHours += th;
-                    if (bdh > 0) {
-                        bdHours += bdh;
-                        bdDaysCount++;
+                // Update period button active styles
+                document.querySelectorAll('.period-btn').forEach(btn => {
+                    const active = btn.getAttribute('data-period') === state.period;
+                    if (active) {
+                        btn.className = 'period-btn px-3 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 shadow transition' + (btn.getAttribute('data-period') === 'allTime' ? ' col-span-2 sm:col-span-1' : '');
+                    } else {
+                        btn.className = 'period-btn px-3 py-2 rounded-xl text-xs font-semibold bg-slate-950 text-slate-300 hover:bg-slate-800 border border-slate-800 transition' + (btn.getAttribute('data-period') === 'allTime' ? ' col-span-2 sm:col-span-1' : '');
                     }
-                    baseHours += (th - bdh);
-                    if (isWk) weekendHours += th;
                 });
 
-                el.statTotalPay.textContent = formatAUD(totalPay);
-                el.statShiftCount.textContent = `${filteredShifts.length} shift${filteredShifts.length === 1 ? '' : 's'} logged`;
-                el.statTotalHours.textContent = formatHours(totalHours);
-                const avgRate = totalHours > 0 ? (totalPay / totalHours) : 0;
-                el.statAvgRate.textContent = `Avg: ${formatAUD(avgRate)}/hr`;
-                el.statBaseHours.textContent = formatHours(baseHours) + ' hrs';
-                el.statWeekendHoursNote.textContent = `${formatHours(weekendHours)} weekend hrs`;
-                el.statBDHours.textContent = formatHours(bdHours) + ' hrs';
-                el.statBDDaysNote.textContent = `${bdDaysCount} days driving B-Double`;
+                const filtered = getFilteredShifts();
+                let sumPay = 0;
+                let sumHours = 0;
+                let sumBDHours = 0;
+                let sumBDAllowance = 0;
+                let sumWeekendHours = 0;
+                let sumWeekendAllowance = 0;
 
-                // Render Shift List
-                if (filteredShifts.length === 0) {
+                filtered.forEach(s => {
+                    const c = calculateShiftPay(s);
+                    sumPay += c.totalPay;
+                    sumHours += c.totalHours;
+                    sumBDHours += c.bDoubleHours;
+                    sumBDAllowance += c.bdAllowancePay;
+                    if (c.isWeekend) {
+                        sumWeekendHours += c.totalHours;
+                        sumWeekendAllowance += c.weekendAllowancePay;
+                    }
+                });
+
+                const avgHourly = sumHours > 0 ? (sumPay / sumHours) : 0;
+
+                if (el.kpiGrossPay) el.kpiGrossPay.textContent = formatAUD(sumPay);
+                if (el.kpiAvgHourly) el.kpiAvgHourly.textContent = `Avg ${formatAUD(avgHourly)}/hr`;
+                if (el.kpiTotalHours) el.kpiTotalHours.textContent = formatHours(sumHours);
+                if (el.kpiShiftCount) el.kpiShiftCount.textContent = `${filtered.length} ${filtered.length === 1 ? 'shift' : 'shifts'} logged`;
+                if (el.kpiBDHours) el.kpiBDHours.textContent = formatHours(sumBDHours);
+                if (el.kpiBDAllowance) el.kpiBDAllowance.textContent = `+${formatAUD(sumBDAllowance)} BD extra`;
+                if (el.kpiWeekendHours) el.kpiWeekendHours.textContent = formatHours(sumWeekendHours);
+                if (el.kpiWeekendAllowance) el.kpiWeekendAllowance.textContent = `+${formatAUD(sumWeekendAllowance)} wknd extra`;
+
+                if (el.historySubtitle) {
+                    el.historySubtitle.textContent = `${filtered.length} ${filtered.length === 1 ? 'shift' : 'shifts'} in ${bounds.label}`;
+                }
+
+                renderShiftList(filtered);
+            }
+
+            function renderShiftList(shifts) {
+                if (!el.shiftListContainer) return;
+
+                if (shifts.length === 0) {
                     el.shiftListContainer.innerHTML = `
-                        <div class="p-8 text-center text-slate-400 space-y-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                            <p class="text-sm font-semibold text-slate-300">No shifts recorded for this period</p>
-                            <p class="text-xs text-slate-500">Log a shift using the form on the left to get started.</p>
+                        <div class="p-8 sm:p-12 text-center space-y-2.5">
+                            <div class="w-12 h-12 rounded-2xl bg-slate-800/80 text-slate-400 mx-auto flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </div>
+                            <h3 class="text-sm font-bold text-slate-200">No shifts logged in this period</h3>
+                            <p class="text-xs text-slate-400 max-w-xs mx-auto">Use the Log New Shift form to record your driving hours, B-Double time, and weekend shifts.</p>
                         </div>
                     `;
-                } else {
-                    // Sort descending by date
-                    filteredShifts.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    el.shiftListContainer.innerHTML = filteredShifts.map(s => {
-                        const th = Number(s.totalHours) || 0;
-                        const bdh = Number(s.bDoubleHours) || 0;
-                        const isWk = Boolean(s.isWeekend);
-                        const calc = calculateShiftPay(th, bdh, isWk);
+                    return;
+                }
 
-                        return `
-                            <div class="p-4 sm:p-5 hover:bg-slate-850/60 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3 group">
-                                <div class="space-y-1 min-w-0">
-                                    <div class="flex flex-wrap items-center gap-2">
-                                        <span class="text-sm font-bold text-white">${escapeHtml(formatDisplayDate(s.date))}</span>
-                                        ${isWk ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">Weekend</span>' : ''}
-                                        ${bdh > 0 ? `<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">B-Double (${formatHours(bdh)}h)</span>` : ''}
-                                    </div>
-                                    <div class="text-xs text-slate-400 flex flex-wrap items-center gap-x-3 gap-y-1">
-                                        <span>Total: <strong class="text-slate-200">${formatHours(th)} hrs</strong></span>
-                                        <span>Base: <strong class="text-slate-200">${formatAUD(calc.basePay)}</strong></span>
-                                        ${bdh > 0 ? `<span>BD Extra: <strong class="text-amber-300">+${formatAUD(calc.bdPay)}</strong></span>` : ''}
-                                        ${calc.wkndPay > 0 ? `<span>Wknd Extra: <strong class="text-purple-300">+${formatAUD(calc.wkndPay)}</strong></span>` : ''}
-                                    </div>
-                                    ${s.notes ? `<div class="text-xs text-slate-400 italic truncate max-w-md">"${escapeHtml(s.notes)}"</div>` : ''}
+                el.shiftListContainer.innerHTML = shifts.map(shift => {
+                    const calc = calculateShiftPay(shift);
+                    const hasBD = calc.bDoubleHours > 0;
+                    return `
+                        <div class="p-4 sm:p-5 hover:bg-slate-850/60 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3.5">
+                            <div class="space-y-1.5 min-w-0">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="text-sm font-bold text-white">${escapeHtml(formatDisplayDate(shift.date))}</span>
+                                    ${calc.isWeekend ? `<span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">Weekend</span>` : ''}
+                                    ${hasBD ? `<span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">B-Double ${calc.bDoubleHours.toFixed(2)}h</span>` : ''}
                                 </div>
-                                <div class="flex items-center justify-between sm:justify-end gap-3 shrink-0 pt-2 sm:pt-0 border-t sm:border-0 border-slate-800">
-                                    <div class="text-right">
-                                        <div class="text-base sm:text-lg font-extrabold text-emerald-400 tabular-nums">${formatAUD(calc.totalPay)}</div>
-                                        <div class="text-[10px] text-slate-400">Net Shift Pay</div>
-                                    </div>
-                                    <div class="flex items-center gap-1">
-                                        <button type="button" data-action="edit" data-id="${s.id}" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition" title="Edit Shift">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                        </button>
-                                        <button type="button" data-action="delete" data-id="${s.id}" class="p-2 rounded-lg bg-slate-800 hover:bg-rose-900/50 text-slate-400 hover:text-rose-300 transition" title="Delete Shift">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                        </button>
-                                    </div>
+                                <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400 tabular-nums">
+                                    <span class="font-semibold text-slate-200">${calc.totalHours.toFixed(2)} hrs total</span>
+                                    ${hasBD ? `<span>• Normal ${calc.normalHours.toFixed(2)}h + BD ${calc.bDoubleHours.toFixed(2)}h</span>` : ''}
+                                </div>
+                                ${shift.notes ? `<p class="text-xs text-slate-400 truncate">${escapeHtml(shift.notes)}</p>` : ''}
+                            </div>
+
+                            <div class="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800/80 shrink-0">
+                                <div class="text-left sm:text-right tabular-nums">
+                                    <div class="text-base sm:text-lg font-extrabold text-emerald-400">${formatAUD(calc.totalPay)}</div>
+                                    <div class="text-[11px] text-slate-400">${formatAUD(calc.totalHours > 0 ? calc.totalPay / calc.totalHours : 0)}/hr eff.</div>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <button type="button" data-action="edit" data-id="${escapeHtml(shift.id)}" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 transition">
+                                        Edit
+                                    </button>
+                                    <button type="button" data-action="delete" data-id="${escapeHtml(shift.id)}" class="p-2 rounded-xl bg-slate-950 hover:bg-rose-950/70 text-slate-400 hover:text-rose-400 border border-slate-800 transition" title="Delete Shift">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                    </button>
                                 </div>
                             </div>
-                        `;
-                    }).join('');
-                }
+                        </div>
+                    `;
+                }).join('');
             }
 
-            // Event Listeners & Initialization
-            loadLocalCache();
-            syncRatesUI();
-            el.shiftDate.value = getTodayISO();
-
-            // Setup Firebase if available
-            try {
-                if (typeof __firebase_config !== 'undefined' && __firebase_config) {
-                    app = initializeApp(__firebase_config);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
-
-                    onAuthStateChanged(auth, async (user) => {
-                        currentUser = user;
-                        if (!user) {
-                            try {
-                                await signInAnonymously(auth);
-                            } catch (e) {
-                                console.error('Anonymous sign-in failed:', e);
-                            }
-                        } else {
-                            // Fetch user cloud data
-                            updateAccountModalUI();
-                        }
-                    });
+            // --- Form Helpers & Reset ---
+            function handleDateChange(isoDateStr) {
+                const d = parseLocalDate(isoDateStr);
+                if (el.dayOfWeekBadge) {
+                    el.dayOfWeekBadge.textContent = d.toLocaleDateString('en-AU', { weekday: 'long' });
                 }
-            } catch (e) {
-                console.log('Firebase running in local offline mode:', e);
+                if (state.rates.autoWeekend) {
+                    const day = d.getDay();
+                    const isWknd = (day === 0 || day === 6);
+                    if (el.isWeekendToggle) el.isWeekendToggle.checked = isWknd;
+                    if (isWknd) {
+                        el.weekendAutoTag?.classList.remove('hidden');
+                    } else {
+                        el.weekendAutoTag?.classList.add('hidden');
+                    }
+                }
+                updateLivePreview();
             }
-
-            updateAccountModalUI();
-            renderDashboard();
-
-            // Modal & Interactive Event Bindings
-            el.btnOpenAccountSettings.addEventListener('click', () => {
-                el.accountModal.classList.remove('hidden');
-                el.accountModal.classList.add('flex');
-            });
-
-            el.btnCloseAccountModal.addEventListener('click', () => {
-                el.accountModal.classList.add('hidden');
-                el.accountModal.classList.remove('flex');
-            });
-
-            el.accountModal.addEventListener('click', (e) => {
-                if (e.target === el.accountModal) {
-                    el.accountModal.classList.add('hidden');
-                    el.accountModal.classList.remove('flex');
-                }
-            });
-
-            el.btnGoogleSignIn.addEventListener('click', handleGoogleButtonClick);
-
-            el.btnCancelInlineGoogle.addEventListener('click', () => {
-                el.inlineGoogleForm.classList.add('hidden');
-            });
-
-            el.btnConfirmInlineGoogle.addEventListener('click', () => {
-                const name = el.inlineGoogleName.value.trim() || 'Driver';
-                const email = el.inlineGoogleEmail.value.trim() || 'driver@gmail.com';
-                localGoogleProfile = { name, email, uid: 'local_google_' + Date.now() };
-                saveLocalCache();
-                updateAccountModalUI();
-                el.inlineGoogleForm.classList.add('hidden');
-                showToast(`Connected Google account (${email}) & backed up shifts!`);
-            });
-
-            el.btnSyncNow.addEventListener('click', () => {
-                uploadAllLocalShiftsToCloud(true);
-            });
-
-            el.btnExportCsv.addEventListener('click', () => {
-                if (state.shifts.length === 0) {
-                    showToast('No shifts to export', 'error');
-                    return;
-                }
-                let csv = 'Date,Day,TotalHours,BDoubleHours,IsWeekend,BasePayAUD,B_DoubleExtraAUD,WeekendExtraAUD,TotalPayAUD,Notes\n';
-                state.shifts.forEach(s => {
-                    const th = Number(s.totalHours) || 0;
-                    const bdh = Number(s.bDoubleHours) || 0;
-                    const isWk = Boolean(s.isWeekend);
-                    const calc = calculateShiftPay(th, bdh, isWk);
-                    const d = parseLocalDate(s.date);
-                    const dayName = d.toLocaleDateString('en-AU', { weekday: 'long' });
-                    csv += `"${s.date}","${dayName}",${th},${bdh},${isWk},${calc.basePay.toFixed(2)},${calc.bdPay.toFixed(2)},${calc.wkndPay.toFixed(2)},${calc.totalPay.toFixed(2)},"${(s.notes || '').replace(/"/g, '""')}"\n`;
-                });
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `RigPay_Shifts_Export_${getTodayISO()}.csv`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                showToast('Shift CSV exported successfully');
-            });
-
-            el.btnExportBackupJson.addEventListener('click', () => {
-                const backupObj = {
-                    version: 2,
-                    app: 'RigPay',
-                    exportedAt: new Date().toISOString(),
-                    rates: state.rates,
-                    shifts: state.shifts
-                };
-                const blob = new Blob([JSON.stringify(backupObj, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `RigPay_Backup_${getTodayISO()}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                showToast('Backup JSON file saved');
-            });
-
-            el.inputRestoreBackupJson.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    try {
-                        const parsed = JSON.parse(evt.target.result);
-                        if (parsed && Array.isArray(parsed.shifts)) {
-                            state.shifts = parsed.shifts;
-                            if (parsed.rates) {
-                                state.rates = { ...DEFAULT_RATES, ...parsed.rates };
-                            }
-                            saveLocalCache();
-                            syncRatesUI();
-                            renderDashboard();
-                            uploadAllLocalShiftsToCloud(false);
-                            showToast(`Restored ${state.shifts.length} shifts successfully!`);
-                            el.accountModal.classList.add('hidden');
-                            el.accountModal.classList.remove('flex');
-                        } else {
-                            showToast('Invalid backup file structure', 'error');
-                        }
-                    } catch (err) {
-                        console.error('Restore parse error:', err);
-                        showToast('Could not read backup file', 'error');
-                    }
-                };
-                reader.readAsText(file);
-                e.target.value = '';
-            });
-
-            el.weekStartDaySelect.addEventListener('change', (e) => {
-                state.rates.weekStartDay = parseInt(e.target.value, 10);
-                saveLocalCache();
-                uploadAllLocalShiftsToCloud(false);
-                renderDashboard();
-                showToast('Pay week start updated');
-            });
-
-            el.btnOpenReset.addEventListener('click', () => {
-                el.resetModal.classList.remove('hidden');
-                el.resetModal.classList.add('flex');
-            });
-
-            el.btnCancelReset.addEventListener('click', () => {
-                el.resetModal.classList.add('hidden');
-                el.resetModal.classList.remove('flex');
-            });
-
-            el.resetModal.addEventListener('click', (e) => {
-                if (e.target === el.resetModal) {
-                    el.resetModal.classList.add('hidden');
-                    el.resetModal.classList.remove('flex');
-                }
-            });
-
-            el.btnConfirmReset.addEventListener('click', async () => {
-                state.shifts = [];
-                saveLocalCache();
-                if (db && currentUser) {
-                    try {
-                        // Clear cloud shifts
-                        state.shifts.forEach(async (s) => {
-                            if (s && s.id) {
-                                await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'shifts', s.id));
-                            }
-                        });
-                    } catch (err) {
-                        console.error('Cloud reset error:', err);
-                    }
-                }
-                renderDashboard();
-                el.resetModal.classList.add('hidden');
-                el.resetModal.classList.remove('flex');
-                el.accountModal.classList.add('hidden');
-                el.accountModal.classList.remove('flex');
-                showToast('All shift data cleared');
-            });
-
-            // Date / Day detection & Auto-weekend detection
-            el.shiftDate.addEventListener('change', () => {
-                const val = el.shiftDate.value;
-                if (!val) return;
-                const d = parseLocalDate(val);
-                const dayName = d.toLocaleDateString('en-AU', { weekday: 'long' });
-                el.dayOfWeekBadge.textContent = dayName;
-
-                const dayIndex = d.getDay(); // 0 = Sun, 6 = Sat
-                const isSatSun = (dayIndex === 0 || dayIndex === 6);
-                if (state.rates.autoWeekend && isSatSun) {
-                    el.isWeekendToggle.checked = true;
-                    el.weekendAutoTag.classList.remove('hidden');
-                } else if (state.rates.autoWeekend) {
-                    el.isWeekendToggle.checked = false;
-                    el.weekendAutoTag.classList.add('hidden');
-                }
-                updateLivePreview();
-            });
-
-            el.isWeekendToggle.addEventListener('change', () => {
-                if (el.isWeekendToggle.checked) {
-                    el.weekendAutoTag.classList.remove('hidden');
-                } else {
-                    el.weekendAutoTag.classList.add('hidden');
-                }
-                updateLivePreview();
-            });
-
-            // Time Calculator helper toggle
-            el.btnToggleTimeCalc.addEventListener('click', () => {
-                el.timeCalcPanel.classList.toggle('hidden');
-            });
-
-            el.btnApplyTimeCalc.addEventListener('click', () => {
-                const start = el.calcStart.value;
-                const end = el.calcEnd.value;
-                const breakMins = parseFloat(el.calcBreak.value) || 0;
-                if (!start || !end) return;
-
-                const [sh, sm] = start.split(':').map(Number);
-                const [eh, em] = end.split(':').map(Number);
-
-                let startMin = sh * 60 + sm;
-                let endMin = eh * 60 + em;
-                if (endMin <= startMin) {
-                    endMin += 24 * 60; // Overnight shift
-                }
-                const workedMins = (endMin - startMin) - breakMins;
-                const totalH = Math.max(0.25, Math.round((workedMins / 60) * 100) / 100);
-
-                el.totalHours.value = totalH;
-                el.timeCalcPanel.classList.add('hidden');
-                updateLivePreview();
-                showToast(`Applied ${totalH} hours from start/finish`);
-            });
-
-            // B-Double Toggle
-            el.droveBDoubleToggle.addEventListener('change', () => {
-                if (el.droveBDoubleToggle.checked) {
-                    el.bDoubleHoursWrapper.classList.remove('hidden');
-                    const th = parseFloat(el.totalHours.value) || 0;
-                    if (th > 0 && !el.bDoubleHours.value) {
-                        el.bDoubleHours.value = th;
-                    }
-                    el.bDoubleBox.className = "rounded-xl bg-slate-950/90 border border-amber-500/50 p-3.5 space-y-3 transition-colors";
-                } else {
-                    el.bDoubleHoursWrapper.classList.add('hidden');
-                    el.bDoubleHours.value = '';
-                    el.bdValidationMsg.classList.add('hidden');
-                    el.bDoubleBox.className = "rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors";
-                }
-                updateLivePreview();
-            });
-
-            el.btnAllShiftBD.addEventListener('click', () => {
-                const th = parseFloat(el.totalHours.value) || 0;
-                el.bDoubleHours.value = th;
-                el.bdValidationMsg.classList.add('hidden');
-                updateLivePreview();
-            });
-
-            el.totalHours.addEventListener('input', () => {
-                if (el.droveBDoubleToggle.checked) {
-                    const th = parseFloat(el.totalHours.value) || 0;
-                    const bdh = parseFloat(el.bDoubleHours.value) || 0;
-                    if (bdh > th) {
-                        el.bDoubleHours.value = th;
-                    }
-                }
-                updateLivePreview();
-            });
-
-            el.bDoubleHours.addEventListener('input', () => {
-                const th = parseFloat(el.totalHours.value) || 0;
-                const bdh = parseFloat(el.bDoubleHours.value) || 0;
-                if (bdh > th) {
-                    el.bdValidationMsg.classList.remove('hidden');
-                } else {
-                    el.bdValidationMsg.classList.add('hidden');
-                }
-                updateLivePreview();
-            });
-
-            // Live rate inputs
-            document.querySelectorAll('.rate-input').forEach(input => {
-                input.addEventListener('input', () => {
-                    state.rates.rateNormal = parseFloat(el.rateNormal.value) || 0;
-                    state.rates.rateBDouble = parseFloat(el.rateBDouble.value) || 0;
-                    state.rates.rateWeekend = parseFloat(el.rateWeekend.value) || 0;
-                    saveLocalCache();
-                    uploadAllLocalShiftsToCloud(false);
-                    syncRatesUI();
-                });
-            });
-
-            el.autoWeekendSetting.addEventListener('change', () => {
-                state.rates.autoWeekend = el.autoWeekendSetting.checked;
-                saveLocalCache();
-                uploadAllLocalShiftsToCloud(false);
-                const d = parseLocalDate(el.shiftDate.value);
-                if (d) {
-                    const dayIndex = d.getDay();
-                    if (state.rates.autoWeekend && (dayIndex === 0 || dayIndex === 6)) {
-                        el.isWeekendToggle.checked = true;
-                        el.weekendAutoTag.classList.remove('hidden');
-                    } else if (state.rates.autoWeekend) {
-                        el.isWeekendToggle.checked = false;
-                        el.weekendAutoTag.classList.add('hidden');
-                    }
-                }
-                updateLivePreview();
-            });
-
-            // Shift form submission
-            el.shiftForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const date = el.shiftDate.value;
-                const totalHours = parseFloat(el.totalHours.value);
-                if (!date || isNaN(totalHours) || totalHours <= 0) {
-                    showToast('Please enter a valid date and hours worked', 'error');
-                    return;
-                }
-
-                const droveBD = el.droveBDoubleToggle.checked;
-                let bDoubleHours = droveBD ? (parseFloat(el.bDoubleHours.value) || 0) : 0;
-                if (bDoubleHours > totalHours) bDoubleHours = totalHours;
-
-                const isWeekend = el.isWeekendToggle.checked;
-                const notes = el.shiftNotes.value.trim();
-                const editId = el.editShiftId.value;
-
-                if (editId) {
-                    const idx = state.shifts.findIndex(s => s.id === editId);
-                    if (idx !== -1) {
-                        state.shifts[idx] = {
-                            ...state.shifts[idx],
-                            date,
-                            totalHours,
-                            bDoubleHours,
-                            isWeekend,
-                            notes,
-                            updatedAt: Date.now()
-                        };
-                    }
-                    showToast('Shift updated successfully');
-                } else {
-                    const newShift = {
-                        id: 'shift_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-                        date,
-                        totalHours,
-                        bDoubleHours,
-                        isWeekend,
-                        notes,
-                        createdAt: Date.now()
-                    };
-                    state.shifts.push(newShift);
-                    showToast('Shift logged successfully');
-                }
-
-                saveLocalCache();
-                uploadAllLocalShiftsToCloud(false);
-                resetShiftForm();
-                renderDashboard();
-            });
-
-            el.btnCancelEdit.addEventListener('click', () => {
-                resetShiftForm();
-            });
 
             function resetShiftForm() {
                 state.editingId = null;
-                el.editShiftId.value = '';
-                el.formTitle.textContent = 'Log Daily Shift';
-                el.btnSaveShiftText.textContent = 'Save Shift Log';
-                el.btnCancelEdit.classList.add('hidden');
-                el.shiftDate.value = getTodayISO();
-                el.totalHours.value = '';
-                el.droveBDoubleToggle.checked = false;
-                el.bDoubleHoursWrapper.classList.add('hidden');
-                el.bDoubleHours.value = '';
-                el.bDoubleBox.className = "rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors";
-                el.isWeekendToggle.checked = false;
-                el.weekendAutoTag.classList.add('hidden');
-                el.shiftNotes.value = '';
-                el.bdValidationMsg.classList.add('hidden');
+                if (el.editShiftId) el.editShiftId.value = '';
+                if (el.formTitle) el.formTitle.textContent = 'Log New Shift';
+                if (el.btnSaveShiftText) el.btnSaveShiftText.textContent = 'Save Shift Log';
+                el.btnCancelEdit?.classList.add('hidden');
 
-                const d = parseLocalDate(el.shiftDate.value);
-                const dayName = d.toLocaleDateString('en-AU', { weekday: 'long' });
-                el.dayOfWeekBadge.textContent = dayName;
-                updateLivePreview();
+                const todayStr = getTodayISO();
+                if (el.shiftDate) el.shiftDate.value = todayStr;
+                if (el.startTime) el.startTime.value = '';
+                if (el.endTime) el.endTime.value = '';
+                if (el.breakMinutes) el.breakMinutes.value = '30';
+                if (el.totalHours) el.totalHours.value = '';
+                if (el.droveBDoubleToggle) el.droveBDoubleToggle.checked = false;
+                el.bDoubleHoursWrapper?.classList.add('hidden');
+                if (el.bDoubleHours) el.bDoubleHours.value = '';
+                if (el.bDoubleBox) {
+                    el.bDoubleBox.className = 'rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors';
+                }
+                el.bdValidationMsg?.classList.add('hidden');
+                if (el.shiftNotes) el.shiftNotes.value = '';
+
+                handleDateChange(todayStr);
             }
 
-            // Period filter buttons
-            el.periodButtons.forEach(btn => {
+            // --- Event Listeners ---
+            // Date & Weekend toggle
+            el.shiftDate?.addEventListener('change', (e) => handleDateChange(e.target.value));
+            el.isWeekendToggle?.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    el.weekendAutoTag?.classList.remove('hidden');
+                } else {
+                    el.weekendAutoTag?.classList.add('hidden');
+                }
+                updateLivePreview();
+            });
+
+            // Quick Start/Finish Time Calculator
+            document.querySelectorAll('.time-calc-input').forEach(inp => {
+                inp.addEventListener('input', () => {
+                    const sVal = el.startTime?.value;
+                    const eVal = el.endTime?.value;
+                    if (!sVal || !eVal) return;
+
+                    const [sh, sm] = sVal.split(':').map(Number);
+                    const [eh, em] = eVal.split(':').map(Number);
+                    let startMins = sh * 60 + sm;
+                    let endMins = eh * 60 + em;
+                    if (endMins <= startMins) endMins += 24 * 60; // Overnight shift support
+
+                    const breakMins = Math.max(0, parseFloat(el.breakMinutes?.value) || 0);
+                    const netHours = Math.max(0, (endMins - startMins - breakMins) / 60);
+                    if (el.totalHours) el.totalHours.value = netHours.toFixed(2);
+                    if (el.droveBDoubleToggle?.checked && el.bDoubleHours && !el.bDoubleHours.value) {
+                        el.bDoubleHours.value = netHours.toFixed(2);
+                    }
+                    updateLivePreview();
+                });
+            });
+
+            // Total Hours & B-Double Toggle
+            el.totalHours?.addEventListener('input', updateLivePreview);
+
+            el.droveBDoubleToggle?.addEventListener('change', (e) => {
+                const checked = e.target.checked;
+                if (checked) {
+                    el.bDoubleHoursWrapper?.classList.remove('hidden');
+                    if (el.bDoubleBox) {
+                        el.bDoubleBox.className = 'rounded-xl bg-slate-950/90 border border-amber-500/50 p-3.5 space-y-3 transition-colors';
+                    }
+                    if (el.bDoubleHours && !el.bDoubleHours.value && el.totalHours?.value) {
+                        el.bDoubleHours.value = el.totalHours.value;
+                    }
+                } else {
+                    el.bDoubleHoursWrapper?.classList.add('hidden');
+                    if (el.bDoubleHours) el.bDoubleHours.value = '';
+                    if (el.bDoubleBox) {
+                        el.bDoubleBox.className = 'rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors';
+                    }
+                }
+                updateLivePreview();
+            });
+
+            el.btnAllHoursBD?.addEventListener('click', () => {
+                if (el.totalHours && el.bDoubleHours) {
+                    el.bDoubleHours.value = el.totalHours.value || '0';
+                    updateLivePreview();
+                }
+            });
+
+            el.bDoubleHours?.addEventListener('input', updateLivePreview);
+            el.btnCancelEdit?.addEventListener('click', resetShiftForm);
+
+            // Shift Form Submit (Save New or Update Existing)
+            el.shiftForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const date = el.shiftDate?.value || getTodayISO();
+                const totalHours = parseFloat(el.totalHours?.value);
+                if (!totalHours || totalHours <= 0) {
+                    showToast('Please enter valid hours worked');
+                    return;
+                }
+
+                const droveBD = Boolean(el.droveBDoubleToggle?.checked);
+                const rawBD = droveBD ? (parseFloat(el.bDoubleHours?.value) || 0) : 0;
+                if (rawBD > totalHours) {
+                    el.bdValidationMsg?.classList.remove('hidden');
+                    showToast('B-Double hours cannot exceed total hours');
+                    return;
+                }
+
+                const isEditing = Boolean(state.editingId);
+                const shiftId = state.editingId || `shift_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+                const shiftObj = {
+                    id: shiftId,
+                    date,
+                    totalHours: Number(totalHours.toFixed(2)),
+                    bDoubleHours: Number(rawBD.toFixed(2)),
+                    isWeekend: Boolean(el.isWeekendToggle?.checked),
+                    notes: (el.shiftNotes?.value || '').trim(),
+                    updatedAt: Date.now()
+                };
+
+                if (isEditing) {
+                    const idx = state.shifts.findIndex(s => s.id === shiftId);
+                    if (idx !== -1) state.shifts[idx] = shiftObj;
+                    else state.shifts.unshift(shiftObj);
+                } else {
+                    state.shifts.unshift(shiftObj);
+                }
+
+                await syncShiftToCloud(shiftObj);
+                resetShiftForm();
+                renderDashboard();
+                showToast(isEditing ? 'Shift updated!' : 'Shift saved!');
+            });
+
+            // Pay Rates Auto-Save Listeners
+            [el.rateNormal, el.rateBDouble, el.rateWeekend].forEach(input => {
+                input?.addEventListener('input', () => {
+                    state.rates.normalRate = Math.max(0, parseFloat(el.rateNormal?.value) || 0);
+                    state.rates.bDoubleExtra = Math.max(0, parseFloat(el.rateBDouble?.value) || 0);
+                    state.rates.weekendExtra = Math.max(0, parseFloat(el.rateWeekend?.value) || 0);
+                    updateEffectiveRatesDisplay();
+                    updateLivePreview();
+                    renderDashboard();
+                    syncRatesToCloud();
+                });
+            });
+
+            el.autoWeekendSetting?.addEventListener('change', (e) => {
+                state.rates.autoWeekend = e.target.checked;
+                syncRatesToCloud();
+                if (el.shiftDate?.value) handleDateChange(el.shiftDate.value);
+                showToast('Weekend detection updated');
+            });
+
+            // Period Filter & B-Double Only Filter
+            document.querySelectorAll('.period-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    el.periodButtons.forEach(b => {
-                        b.className = 'period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800 text-center';
-                    });
-                    btn.className = 'period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 shadow-sm text-center';
-                    state.currentPeriod = btn.getAttribute('data-period');
-                    
-                    const titles = {
-                        'this_week': 'Showing current week',
-                        'last_week': 'Showing last week',
-                        'fortnight': 'Showing 14-day pay period',
-                        'this_month': 'Showing current calendar month',
-                        'all': 'Showing all recorded shift history'
-                    };
-                    el.periodRangeLabel.textContent = titles[state.currentPeriod] || '';
-                    el.historySubtitle.textContent = titles[state.currentPeriod] || '';
+                    state.period = btn.getAttribute('data-period') || 'thisWeek';
                     renderDashboard();
                 });
             });
 
-            el.filterBDOnly.addEventListener('change', () => {
-                state.filterBDOnly = el.filterBDOnly.checked;
+            el.filterBDOnly?.addEventListener('change', (e) => {
+                state.filterBDOnly = e.target.checked;
                 renderDashboard();
             });
 
-            // Shift list actions (Edit / Delete)
-            el.shiftListContainer.addEventListener('click', (e) => {
+            // Shift History Edit & Delete Delegation
+            el.shiftListContainer?.addEventListener('click', (e) => {
                 const btn = e.target.closest('button[data-action]');
                 if (!btn) return;
                 const action = btn.getAttribute('data-action');
@@ -1567,7 +1386,7 @@
                         state.shifts.splice(idx, 1);
                         saveLocalCache();
                         if (db && currentUser) {
-                            deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'shifts', id)).catch(err => console.error('Delete shift sync error:', err));
+                            deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'shifts', id)).catch(() => {});
                         }
                         renderDashboard();
                         showToast('Shift deleted');
@@ -1576,45 +1395,268 @@
                     const shift = state.shifts.find(s => s.id === id);
                     if (shift) {
                         state.editingId = shift.id;
-                        el.editShiftId.value = shift.id;
-                        el.formTitle.textContent = 'Edit Shift Log';
-                        el.btnSaveShiftText.textContent = 'Update Shift Log';
-                        el.btnCancelEdit.classList.remove('hidden');
+                        if (el.editShiftId) el.editShiftId.value = shift.id;
+                        if (el.formTitle) el.formTitle.textContent = 'Edit Shift Log';
+                        if (el.btnSaveShiftText) el.btnSaveShiftText.textContent = 'Update Shift Log';
+                        el.btnCancelEdit?.classList.remove('hidden');
 
-                        el.shiftDate.value = shift.date;
+                        if (el.shiftDate) el.shiftDate.value = shift.date;
                         const d = parseLocalDate(shift.date);
-                        el.dayOfWeekBadge.textContent = d.toLocaleDateString('en-AU', { weekday: 'long' });
+                        if (el.dayOfWeekBadge) el.dayOfWeekBadge.textContent = d.toLocaleDateString('en-AU', { weekday: 'long' });
 
-                        el.totalHours.value = shift.totalHours;
+                        if (el.totalHours) el.totalHours.value = shift.totalHours;
                         const hasBD = Number(shift.bDoubleHours || 0) > 0;
-                        el.droveBDoubleToggle.checked = hasBD;
+                        if (el.droveBDoubleToggle) el.droveBDoubleToggle.checked = hasBD;
                         if (hasBD) {
-                            el.bDoubleHoursWrapper.classList.remove('hidden');
-                            el.bDoubleHours.value = shift.bDoubleHours;
-                            el.bDoubleBox.className = "rounded-xl bg-slate-950/90 border border-amber-500/50 p-3.5 space-y-3 transition-colors";
+                            el.bDoubleHoursWrapper?.classList.remove('hidden');
+                            if (el.bDoubleHours) el.bDoubleHours.value = shift.bDoubleHours;
+                            if (el.bDoubleBox) {
+                                el.bDoubleBox.className = 'rounded-xl bg-slate-950/90 border border-amber-500/50 p-3.5 space-y-3 transition-colors';
+                            }
                         } else {
-                            el.bDoubleHoursWrapper.classList.add('hidden');
-                            el.bDoubleHours.value = '';
-                            el.bDoubleBox.className = "rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors";
+                            el.bDoubleHoursWrapper?.classList.add('hidden');
+                            if (el.bDoubleHours) el.bDoubleHours.value = '';
+                            if (el.bDoubleBox) {
+                                el.bDoubleBox.className = 'rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors';
+                            }
                         }
 
-                        el.isWeekendToggle.checked = Boolean(shift.isWeekend);
+                        if (el.isWeekendToggle) el.isWeekendToggle.checked = Boolean(shift.isWeekend);
                         if (shift.isWeekend) {
-                            el.weekendAutoTag.classList.remove('hidden');
+                            el.weekendAutoTag?.classList.remove('hidden');
                         } else {
-                            el.weekendAutoTag.classList.add('hidden');
+                            el.weekendAutoTag?.classList.add('hidden');
                         }
-                        el.shiftNotes.value = shift.notes || '';
+                        if (el.shiftNotes) el.shiftNotes.value = shift.notes || '';
                         updateLivePreview();
                         window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
                 }
             });
 
-            // Initialize initial date badge
-            const initialDateObj = parseLocalDate(el.shiftDate.value);
-            el.dayOfWeekBadge.textContent = initialDateObj.toLocaleDateString('en-AU', { weekday: 'long' });
-            updateLivePreview();
+            // --- Settings Modal & Account Actions ---
+            el.btnOpenAccountSettings?.addEventListener('click', () => {
+                updateAccountUI();
+                el.accountModal?.classList.remove('hidden');
+                el.accountModal?.classList.add('flex');
+            });
+
+            el.btnCloseAccountModal?.addEventListener('click', () => {
+                el.accountModal?.classList.add('hidden');
+                el.accountModal?.classList.remove('flex');
+                el.inlineGoogleForm?.classList.add('hidden');
+            });
+
+            el.accountModal?.addEventListener('click', (e) => {
+                if (e.target === el.accountModal) {
+                    el.accountModal.classList.add('hidden');
+                    el.accountModal.classList.remove('flex');
+                    el.inlineGoogleForm?.classList.add('hidden');
+                }
+            });
+
+            // Pay Week Start Day Selector
+            el.weekStartDaySelect?.addEventListener('change', (e) => {
+                state.rates.weekStartDay = Number(e.target.value);
+                syncRatesToCloud();
+                renderDashboard();
+                showToast('Pay week start day updated');
+            });
+
+            // Google Sign-In / Link Profile
+            el.btnGoogleSignIn?.addEventListener('click', async () => {
+                const isFirebaseGoogle = currentUser && !currentUser.isAnonymous;
+                if (isFirebaseGoogle || state.linkedProfile) {
+                    state.linkedProfile = null;
+                    saveLocalCache();
+                    if (auth && isFirebaseGoogle) {
+                        try {
+                            await signOut(auth);
+                            await signInAnonymously(auth);
+                        } catch (e) {
+                            console.warn('Sign out fallback:', e);
+                        }
+                    }
+                    updateAccountUI();
+                    showToast('Signed out of Google account');
+                    return;
+                }
+
+                // Try Firebase Google Popup first; fallback smoothly to inline Google profile link in embedded frames
+                if (auth) {
+                    try {
+                        const provider = new GoogleAuthProvider();
+                        if (auth.currentUser && auth.currentUser.isAnonymous) {
+                            await linkWithPopup(auth.currentUser, provider);
+                        } else {
+                            await signInWithPopup(auth, provider);
+                        }
+                        await pushAllLocalToCloud();
+                        updateAccountUI();
+                        showToast('Connected with Google!');
+                        return;
+                    } catch (err) {
+                        console.info('Opening inline Google account link form:', err?.code || err);
+                    }
+                }
+
+                el.inlineGoogleForm?.classList.remove('hidden');
+                el.inlineGoogleName?.focus();
+            });
+
+            el.btnCancelInlineGoogle?.addEventListener('click', () => {
+                el.inlineGoogleForm?.classList.add('hidden');
+            });
+
+            el.btnConfirmInlineGoogle?.addEventListener('click', async () => {
+                const name = (el.inlineGoogleName?.value || '').trim() || 'Driver Account';
+                const email = (el.inlineGoogleEmail?.value || '').trim();
+                if (!email || !email.includes('@')) {
+                    showToast('Please enter a valid Google email');
+                    return;
+                }
+                state.linkedProfile = { name, email, linkedAt: Date.now() };
+                await pushAllLocalToCloud();
+                el.inlineGoogleForm?.classList.add('hidden');
+                updateAccountUI();
+                showToast(`Linked ${email} & backed up shifts!`);
+            });
+
+            // Manual Backup Now
+            el.btnSyncNow?.addEventListener('click', async () => {
+                await pushAllLocalToCloud();
+                showToast('All shifts & pay rates backed up!');
+            });
+
+            // Export CSV
+            el.btnExportCsv?.addEventListener('click', () => {
+                if (state.shifts.length === 0) {
+                    showToast('No shifts logged yet to export');
+                    return;
+                }
+                const headers = ['Date', 'Day', 'Total Hours', 'Normal Hours', 'B-Double Hours', 'Weekend', 'Base Pay', 'BD Extra', 'Weekend Extra', 'Total Gross Pay', 'Notes'];
+                const sorted = [...state.shifts].sort((a, b) => b.date.localeCompare(a.date));
+                const rows = sorted.map(s => {
+                    const c = calculateShiftPay(s);
+                    const dayName = parseLocalDate(s.date).toLocaleDateString('en-AU', { weekday: 'short' });
+                    return [
+                        s.date,
+                        dayName,
+                        c.totalHours.toFixed(2),
+                        c.normalHours.toFixed(2),
+                        c.bDoubleHours.toFixed(2),
+                        c.isWeekend ? 'Yes' : 'No',
+                        c.basePay.toFixed(2),
+                        c.bdAllowancePay.toFixed(2),
+                        c.weekendAllowancePay.toFixed(2),
+                        c.totalPay.toFixed(2),
+                        `"${String(s.notes || '').replace(/"/g, '""')}"`
+                    ].join(',');
+                });
+
+                const csvContent = [headers.join(','), ...rows].join('\n');
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `RigPay_Shifts_${getTodayISO()}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('CSV exported!');
+            });
+
+            // Export Portable JSON Backup File
+            el.btnExportBackupJson?.addEventListener('click', () => {
+                const payload = {
+                    app: 'RigPay',
+                    exportedAt: new Date().toISOString(),
+                    rates: state.rates,
+                    shifts: state.shifts
+                };
+                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `RigPay_Backup_${getTodayISO()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('Backup file saved!');
+            });
+
+            // Restore from JSON Backup File
+            el.inputRestoreBackupJson?.addEventListener('change', (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = async (evt) => {
+                    try {
+                        const parsed = JSON.parse(String(evt.target?.result || '{}'));
+                        if (parsed.rates && typeof parsed.rates === 'object') {
+                            state.rates = { ...state.rates, ...parsed.rates };
+                        }
+                        if (Array.isArray(parsed.shifts)) {
+                            const map = new Map(state.shifts.map(s => [s.id, s]));
+                            parsed.shifts.forEach(s => {
+                                if (s && s.id && s.date) map.set(s.id, s);
+                            });
+                            state.shifts = Array.from(map.values());
+                        }
+                        await pushAllLocalToCloud();
+                        syncRateInputsFromState();
+                        renderDashboard();
+                        showToast(`Restored ${state.shifts.length} shifts from backup!`);
+                    } catch (err) {
+                        showToast('Invalid backup JSON file');
+                    } finally {
+                        e.target.value = '';
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+            // Reset All Data Modal
+            el.btnOpenReset?.addEventListener('click', () => {
+                el.accountModal?.classList.add('hidden');
+                el.accountModal?.classList.remove('flex');
+                el.resetModal?.classList.remove('hidden');
+                el.resetModal?.classList.add('flex');
+            });
+
+            el.btnCancelReset?.addEventListener('click', () => {
+                el.resetModal?.classList.add('hidden');
+                el.resetModal?.classList.remove('flex');
+            });
+
+            el.btnConfirmReset?.addEventListener('click', async () => {
+                const oldShifts = [...state.shifts];
+                state.shifts = [];
+                saveLocalCache();
+                if (db && currentUser && oldShifts.length > 0) {
+                    try {
+                        const batch = writeBatch(db);
+                        oldShifts.forEach(s => {
+                            batch.delete(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'shifts', s.id));
+                        });
+                        await batch.commit();
+                    } catch (e) {
+                        console.warn('Cloud delete batch warning:', e);
+                    }
+                }
+                el.resetModal?.classList.add('hidden');
+                el.resetModal?.classList.remove('flex');
+                resetShiftForm();
+                renderDashboard();
+                showToast('All shift data cleared');
+            });
+
+            // --- Boot Application ---
+            syncRateInputsFromState();
+            resetShiftForm();
+            renderDashboard();
         })();
     </script>
 </body>
