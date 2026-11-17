@@ -107,20 +107,10 @@
                         RigPay
                         <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 shrink-0">AUD</span>
                     </h1>
-                    <p class="text-xs text-slate-400 hidden sm:block truncate">Heavy Vehicle Shift & B-Double Pay Tracker</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-                <button id="btnExportCsv" type="button" class="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition">
-                    <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
-                        RigPay
-                        <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">AUD</span>
-                    </h1>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 shrink-0">
                 <button id="btnOpenAccountSettings" type="button" title="Settings & Cloud Sync" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition relative">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="3"/>
