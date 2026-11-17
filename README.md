@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -29,6 +30,7 @@
         body {
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
         }
         .tabular-nums {
             font-variant-numeric: tabular-nums;
@@ -56,15 +58,15 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen pb-16 selection:bg-amber-500 selection:text-slate-950">
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-16 overflow-x-hidden selection:bg-amber-500 selection:text-slate-950">
 
     <!-- Top Navigation Header -->
     <header class="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 shadow-lg">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-[#172136] to-[#0a0f1c] border border-slate-700/80 flex items-center justify-center shadow-lg shadow-slate-950/60 shrink-0 overflow-hidden">
+        <div class="max-w-6xl mx-auto px-3.5 sm:px-6 py-3 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-3">
+            <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-[#172136] to-[#0a0f1c] border border-slate-700/80 flex items-center justify-center shadow-lg shadow-slate-950/60 shrink-0 overflow-hidden">
                     <!-- Custom RigPay B-Double & Dollar/Clock Logo SVG -->
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="w-9 h-9">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="w-8 h-8 sm:w-9 sm:h-9">
                         <defs>
                             <linearGradient id="rigChrome" x1="0%" y1="0%" x2="0%" y2="100%">
                                 <stop offset="0%" stop-color="#ffffff"/>
@@ -101,30 +103,31 @@
                         <text x="32" y="56.5" text-anchor="middle" fill="#ffffff" font-family="Inter, sans-serif" font-weight="800" font-size="9.5" letter-spacing="0.8">RIGPAY</text>
                     </svg>
                 </div>
-                <div>
+                <div class="min-w-0">
+                    <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white flex items-center gap-2 truncate">
+                        RigPay
+                        <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 shrink-0">AUD</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 hidden sm:block truncate">Heavy Vehicle Shift & B-Double Pay Tracker</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+                <button id="btnExportCsv" type="button" class="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition">
                     <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
                         RigPay
                         <span class="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">AUD</span>
                     </h1>
-                    <p class="text-xs text-slate-400 hidden sm:block">Heavy Vehicle Shift & B-Double Pay Tracker</p>
                 </div>
             </div>
 
             <div class="flex items-center gap-2">
-                <button id="btnExportCsv" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
-                    </svg>
-                    <span>Export CSV</span>
-                </button>
-                <button id="btnOpenAccountSettings" type="button" title="Account & Cloud Sync Settings" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition relative">
+                <button id="btnOpenAccountSettings" type="button" title="Settings & Cloud Sync" class="inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition relative">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="3"/>
                         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                     </svg>
-                    <span class="hidden sm:inline">Sync</span>
+                    <span class="hidden sm:inline">Settings</span>
                     <span id="cloudStatusDot" class="w-2 h-2 rounded-full bg-slate-500"></span>
                 </button>
             </div>
@@ -132,87 +135,87 @@
     </header>
 
     <!-- Toast Notification Banner -->
-    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-[calc(100%-2.5rem)]"></div>
+    <div id="toastContainer" class="fixed bottom-4 right-3 sm:bottom-5 sm:right-5 z-50 flex flex-col gap-2 pointer-events-none max-w-sm w-[calc(100%-1.5rem)] sm:w-[calc(100%-2.5rem)]"></div>
 
     <!-- Main Content Container -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-6 pt-6 space-y-6">
+    <main class="max-w-6xl mx-auto px-3.5 sm:px-6 pt-5 sm:pt-6 space-y-5 sm:space-y-6">
 
         <!-- Period Filter & Summary Cards Section -->
         <section aria-label="Earnings Summary" class="space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <div>
                     <h2 class="text-base font-bold text-slate-200">Pay Period Overview</h2>
                     <p id="periodRangeLabel" class="text-xs text-slate-400">Showing current week (Mon – Sun)</p>
                 </div>
-                <!-- Period Selector Pills -->
-                <div class="flex flex-wrap gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-800" role="tablist">
-                    <button type="button" data-period="this_week" class="period-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 shadow-sm">This Week</button>
-                    <button type="button" data-period="last_week" class="period-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800">Last Week</button>
-                    <button type="button" data-period="fortnight" class="period-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800">Fortnight</button>
-                    <button type="button" data-period="this_month" class="period-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800">This Month</button>
-                    <button type="button" data-period="all" class="period-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800">All Time</button>
+                <!-- Responsive Period Selector Grid on Mobile, Flex Row on Larger Screens -->
+                <div class="grid grid-cols-3 sm:flex sm:flex-wrap gap-1.5 bg-slate-900 p-1.5 rounded-xl border border-slate-800 w-full md:w-auto" role="tablist">
+                    <button type="button" data-period="this_week" class="period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 shadow-sm text-center">This Week</button>
+                    <button type="button" data-period="last_week" class="period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800 text-center">Last Week</button>
+                    <button type="button" data-period="fortnight" class="period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800 text-center">Fortnight</button>
+                    <button type="button" data-period="this_month" class="period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800 text-center">This Month</button>
+                    <button type="button" data-period="all" class="period-btn col-span-2 sm:col-span-1 px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800 text-center">All Time</button>
                 </div>
             </div>
 
-            <!-- 4 KPI Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <!-- 4 KPI Cards: 1 col on ultra-small phones, 2 cols on phones/tablets, 4 cols on desktop -->
+            <div class="grid grid-cols-1 min-[360px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <!-- Total Earnings -->
-                <div class="bg-gradient-to-br from-slate-900 to-slate-850 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md relative overflow-hidden">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Gross Earnings</span>
-                        <span class="w-7 h-7 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-sm font-bold">$</span>
+                <div class="bg-gradient-to-br from-slate-900 to-slate-850 border border-slate-800 rounded-2xl p-3.5 sm:p-5 shadow-md relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-1.5 sm:mb-2 gap-2">
+                        <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Gross Earnings</span>
+                        <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-500/15 text-emerald-400 flex items-center justify-center text-xs sm:text-sm font-bold shrink-0">$</span>
                     </div>
-                    <div id="statTotalPay" class="text-2xl sm:text-3xl font-extrabold text-emerald-400 tabular-nums tracking-tight">$0.00</div>
-                    <div id="statShiftCount" class="text-xs text-slate-400 mt-1">0 shifts logged</div>
+                    <div id="statTotalPay" class="text-xl sm:text-2xl xl:text-3xl font-extrabold text-emerald-400 tabular-nums tracking-tight truncate">$0.00</div>
+                    <div id="statShiftCount" class="text-[11px] sm:text-xs text-slate-400 mt-1">0 shifts logged</div>
                 </div>
 
                 <!-- Total Hours -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Hours</span>
-                        <span class="w-7 h-7 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-5 shadow-md">
+                    <div class="flex items-center justify-between mb-1.5 sm:mb-2 gap-2">
+                        <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Total Hours</span>
+                        <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-sky-500/15 text-sky-400 flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                         </span>
                     </div>
-                    <div id="statTotalHours" class="text-2xl sm:text-3xl font-extrabold text-white tabular-nums tracking-tight">0.00 <span class="text-sm font-semibold text-slate-400">hrs</span></div>
-                    <div id="statAvgRate" class="text-xs text-slate-400 mt-1">Avg: $0.00/hr</div>
+                    <div id="statTotalHours" class="text-xl sm:text-2xl xl:text-3xl font-extrabold text-white tabular-nums tracking-tight">0.00 <span class="text-xs sm:text-sm font-semibold text-slate-400">hrs</span></div>
+                    <div id="statAvgRate" class="text-[11px] sm:text-xs text-slate-400 mt-1 truncate">Avg: $0.00/hr</div>
                 </div>
 
                 <!-- Standard & Weekend Hours -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Single / Non-BD</span>
-                        <span class="w-7 h-7 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-5 shadow-md">
+                    <div class="flex items-center justify-between mb-1.5 sm:mb-2 gap-2">
+                        <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Single / Non-BD</span>
+                        <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-indigo-500/15 text-indigo-400 flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 sm:w-4 sm:h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13" rx="2"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
                         </span>
                     </div>
-                    <div id="statBaseHours" class="text-2xl sm:text-3xl font-extrabold text-slate-100 tabular-nums tracking-tight">0.00 <span class="text-sm font-semibold text-slate-400">hrs</span></div>
-                    <div id="statWeekendHoursNote" class="text-xs text-purple-400 mt-1">0.00 weekend hrs</div>
+                    <div id="statBaseHours" class="text-xl sm:text-2xl xl:text-3xl font-extrabold text-slate-100 tabular-nums tracking-tight">0.00 <span class="text-xs sm:text-sm font-semibold text-slate-400">hrs</span></div>
+                    <div id="statWeekendHoursNote" class="text-[11px] sm:text-xs text-purple-400 mt-1 truncate">0.00 weekend hrs</div>
                 </div>
 
                 <!-- B-Double Hours -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-md">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">B-Double Hours</span>
-                        <span class="w-7 h-7 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center font-bold text-xs">BD</span>
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3.5 sm:p-5 shadow-md">
+                    <div class="flex items-center justify-between mb-1.5 sm:mb-2 gap-2">
+                        <span class="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">B-Double Hours</span>
+                        <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-500/15 text-amber-400 flex items-center justify-center font-bold text-[11px] sm:text-xs shrink-0">BD</span>
                     </div>
-                    <div id="statBDHours" class="text-2xl sm:text-3xl font-extrabold text-amber-400 tabular-nums tracking-tight">0.00 <span class="text-sm font-semibold text-amber-500/70">hrs</span></div>
-                    <div id="statBDDaysNote" class="text-xs text-slate-400 mt-1">0 days driving B-Double</div>
+                    <div id="statBDHours" class="text-xl sm:text-2xl xl:text-3xl font-extrabold text-amber-400 tabular-nums tracking-tight">0.00 <span class="text-xs sm:text-sm font-semibold text-amber-500/70">hrs</span></div>
+                    <div id="statBDDaysNote" class="text-[11px] sm:text-xs text-slate-400 mt-1 truncate">0 days driving B-Double</div>
                 </div>
             </div>
         </section>
 
         <!-- Main Workspace Grid: Left = Shift Logger & Rates, Right = Shift History -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
 
             <!-- Left Column (5 cols on lg): Shift Logger + Pay Rate Settings -->
-            <div class="lg:col-span-5 space-y-6">
+            <div class="lg:col-span-5 space-y-5 sm:space-y-6">
 
                 <!-- 1. Daily Shift Logger Card -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-                    <div class="px-5 py-4 bg-slate-850 border-b border-slate-800 flex items-center justify-between">
+                    <div class="px-4 sm:px-5 py-3.5 sm:py-4 bg-slate-850 border-b border-slate-800 flex items-center justify-between gap-2">
                         <div class="flex items-center gap-2.5">
-                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
                             <h2 id="formTitle" class="text-base font-bold text-white">Log Daily Shift</h2>
                         </div>
                         <button id="btnCancelEdit" type="button" class="hidden text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700">
@@ -220,12 +223,12 @@
                         </button>
                     </div>
 
-                    <form id="shiftForm" class="p-5 space-y-4">
+                    <form id="shiftForm" class="p-4 sm:p-5 space-y-4">
                         <input type="hidden" id="editShiftId" value="">
 
                         <!-- Date & Day Detection -->
                         <div class="space-y-1.5">
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between gap-2">
                                 <label for="shiftDate" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Shift Date</label>
                                 <span id="dayOfWeekBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300">Tuesday</span>
                             </div>
@@ -233,10 +236,10 @@
                         </div>
 
                         <!-- Weekend Toggle Switch -->
-                        <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-950/80 border border-slate-800">
-                            <div>
-                                <div class="text-sm font-semibold text-slate-200 flex items-center gap-2">
-                                    Weekend Extra Allowance
+                        <div class="flex items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-950/80 border border-slate-800">
+                            <div class="min-w-0">
+                                <div class="text-sm font-semibold text-slate-200 flex flex-wrap items-center gap-1.5">
+                                    <span>Weekend Extra Allowance</span>
                                     <span id="weekendAutoTag" class="hidden text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">Auto Sat/Sun</span>
                                 </div>
                                 <p class="text-xs text-slate-400">Adds +$/hr weekend top-up to all shift hours</p>
@@ -249,17 +252,17 @@
 
                         <!-- Total Hours Worked + Time Calculator Helper -->
                         <div class="space-y-2">
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between gap-2">
                                 <label for="totalHours" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Hours Worked</label>
-                                <button type="button" id="btnToggleTimeCalc" class="text-xs font-semibold text-amber-400 hover:text-amber-300 flex items-center gap-1">
+                                <button type="button" id="btnToggleTimeCalc" class="text-xs font-semibold text-amber-400 hover:text-amber-300 flex items-center gap-1 shrink-0">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                     Start/Finish Helper
                                 </button>
                             </div>
 
-                            <!-- Collapsible Start / Finish / Break Calculator -->
+                            <!-- Collapsible Start / Finish / Break Calculator (Auto-stacks on narrow screens) -->
                             <div id="timeCalcPanel" class="hidden p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-                                <div class="grid grid-cols-3 gap-2">
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                                     <div>
                                         <label for="calcStart" class="block text-[11px] font-medium text-slate-400 mb-1">Start Time</label>
                                         <input type="time" id="calcStart" value="05:00" class="w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:border-amber-500 focus:outline-none">
@@ -270,24 +273,24 @@
                                     </div>
                                     <div>
                                         <label for="calcBreak" class="block text-[11px] font-medium text-slate-400 mb-1">Unpaid Break (m)</label>
-                                        <input type="number" id="calcBreak" value="30" min="0" step="15" class="w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:border-amber-500 focus:outline-none">
+                                        <input type="number" id="calcBreak" value="30" min="0" step="15" inputmode="numeric" class="w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:border-amber-500 focus:outline-none">
                                     </div>
                                 </div>
-                                <button type="button" id="btnApplyTimeCalc" class="w-full py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold border border-slate-700 transition">
+                                <button type="button" id="btnApplyTimeCalc" class="w-full py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-amber-400 text-xs font-bold border border-slate-700 transition">
                                     Apply Calculated Hours
                                 </button>
                             </div>
 
                             <div class="relative">
-                                <input type="number" id="totalHours" step="0.01" min="0.25" max="24" placeholder="e.g. 11.5" required class="w-full px-3.5 py-3 pr-14 rounded-xl bg-slate-950 border border-slate-700 text-white text-base font-bold tabular-nums focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
+                                <input type="number" id="totalHours" step="0.01" min="0.25" max="24" inputmode="decimal" placeholder="e.g. 11.5" required class="w-full px-3.5 py-3 pr-14 rounded-xl bg-slate-950 border border-slate-700 text-white text-base font-bold tabular-nums focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition">
                                 <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">HRS</span>
                             </div>
                         </div>
 
                         <!-- B-Double Toggle & Hours Section -->
                         <div class="rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors" id="bDoubleBox">
-                            <div class="flex items-center justify-between">
-                                <div>
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="min-w-0">
                                     <div class="text-sm font-bold text-white flex items-center gap-2">
                                         Drove B-Double Today?
                                     </div>
@@ -301,14 +304,14 @@
 
                             <!-- Conditional B-Double Hours Input -->
                             <div id="bDoubleHoursWrapper" class="hidden pt-2 border-t border-slate-800/80 space-y-2">
-                                <div class="flex items-center justify-between">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
                                     <label for="bDoubleHours" class="text-xs font-semibold uppercase tracking-wider text-amber-400">B-Double Hours Driven</label>
                                     <button type="button" id="btnAllShiftBD" class="text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-400 border border-amber-500/30 transition">
                                         All Shift Hours
                                     </button>
                                 </div>
                                 <div class="relative">
-                                    <input type="number" id="bDoubleHours" step="0.01" min="0" max="24" placeholder="e.g. 8.0" class="w-full px-3.5 py-3 pr-16 rounded-xl bg-slate-900 border border-amber-500/50 text-amber-300 text-base font-bold tabular-nums focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition">
+                                    <input type="number" id="bDoubleHours" step="0.01" min="0" max="24" inputmode="decimal" placeholder="e.g. 8.0" class="w-full px-3.5 py-3 pr-16 rounded-xl bg-slate-900 border border-amber-500/50 text-amber-300 text-base font-bold tabular-nums focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition">
                                     <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-amber-500/70">BD HRS</span>
                                 </div>
                                 <p id="bdValidationMsg" class="hidden text-xs text-rose-400 font-medium">B-Double hours cannot exceed Total Hours Worked.</p>
@@ -322,19 +325,19 @@
                         </div>
 
                         <!-- Live Shift Pay Breakdown Preview -->
-                        <div class="rounded-xl bg-gradient-to-r from-slate-950 to-slate-900 border border-slate-800 p-4 space-y-2">
-                            <div class="flex items-center justify-between">
+                        <div class="rounded-xl bg-gradient-to-r from-slate-950 to-slate-900 border border-slate-800 p-3.5 sm:p-4 space-y-2">
+                            <div class="flex items-center justify-between gap-2">
                                 <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Live Shift Pay Estimate</span>
-                                <span id="previewTotalPay" class="text-xl font-extrabold text-emerald-400 tabular-nums">$0.00</span>
+                                <span id="previewTotalPay" class="text-lg sm:text-xl font-extrabold text-emerald-400 tabular-nums">$0.00</span>
                             </div>
-                            <div id="previewBreakdownLines" class="text-xs text-slate-400 space-y-1 pt-1 border-t border-slate-800/80 tabular-nums">
+                            <div id="previewBreakdownLines" class="text-xs text-slate-400 space-y-1.5 pt-1.5 border-t border-slate-800/80 tabular-nums">
                                 <div>Enter hours worked to preview pay breakdown.</div>
                             </div>
                         </div>
 
                         <!-- Submit Button -->
                         <button type="submit" id="btnSaveShift" class="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-[0.99] text-slate-950 font-extrabold text-sm sm:text-base shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
                             <span id="btnSaveShiftText">Save Shift Log</span>
                         </button>
                     </form>
@@ -342,19 +345,19 @@
 
                 <!-- 2. Pay Rates Configuration Card -->
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-                    <button type="button" id="btnToggleRatesAccordion" class="w-full px-5 py-4 bg-slate-850 border-b border-slate-800 flex items-center justify-between text-left">
-                        <div class="flex items-center gap-2.5">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                            <div>
+                    <button type="button" id="btnToggleRatesAccordion" class="w-full px-4 sm:px-5 py-3.5 sm:py-4 bg-slate-850 border-b border-slate-800 flex items-center justify-between gap-2 text-left">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            <div class="min-w-0">
                                 <h2 class="text-base font-bold text-white">Pay Rates & Top-Ups</h2>
-                                <p id="ratesSummarySub" class="text-xs text-slate-400 tabular-nums">Base $36.00 • BD +$6.00 • Wknd +$18.00</p>
+                                <p id="ratesSummarySub" class="text-xs text-slate-400 tabular-nums truncate">Base $36.00 • BD +$6.00 • Wknd +$18.00</p>
                             </div>
                         </div>
-                        <span class="text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">Auto-Saved</span>
+                        <span class="text-[11px] sm:text-xs font-semibold text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20 shrink-0">Auto-Saved</span>
                     </button>
 
-                    <div id="ratesPanelBody" class="p-5 space-y-4">
-                        <!-- 3 Rate Inputs -->
+                    <div id="ratesPanelBody" class="p-4 sm:p-5 space-y-4">
+                        <!-- 3 Rate Inputs: Stacks on small phones, 3-col on sm+ -->
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
                                 <label for="rateNormal" class="block text-xs font-semibold text-slate-300 mb-1">Ordinary Base ($/hr)</label>
@@ -381,23 +384,23 @@
                             </div>
                         </div>
 
-                        <!-- Live Effective Stacked Rates Preview Badges -->
+                        <!-- Live Effective Stacked Rates Preview Badges: 1 col on tiny screens, 2 col on sm+ -->
                         <div class="rounded-xl bg-slate-950 border border-slate-800 p-3.5 space-y-2">
                             <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Effective Stacked Hourly Rates</div>
-                            <div class="grid grid-cols-2 gap-2 text-xs tabular-nums">
-                                <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                            <div class="grid grid-cols-1 min-[420px]:grid-cols-2 gap-2 text-xs tabular-nums">
+                                <div class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between gap-2">
                                     <span class="text-slate-400">Weekday Base</span>
                                     <span id="effWeekdayBase" class="font-bold text-white">$36.00/hr</span>
                                 </div>
-                                <div class="p-2.5 rounded-lg bg-slate-900 border border-amber-500/25 flex items-center justify-between">
+                                <div class="p-2.5 rounded-lg bg-slate-900 border border-amber-500/25 flex items-center justify-between gap-2">
                                     <span class="text-amber-400/90">Weekday B-Double</span>
                                     <span id="effWeekdayBD" class="font-bold text-amber-300">$42.00/hr</span>
                                 </div>
-                                <div class="p-2.5 rounded-lg bg-slate-900 border border-purple-500/25 flex items-center justify-between">
+                                <div class="p-2.5 rounded-lg bg-slate-900 border border-purple-500/25 flex items-center justify-between gap-2">
                                     <span class="text-purple-400/90">Weekend Base</span>
                                     <span id="effWeekendBase" class="font-bold text-purple-300">$54.00/hr</span>
                                 </div>
-                                <div class="p-2.5 rounded-lg bg-slate-900 border border-emerald-500/25 flex items-center justify-between">
+                                <div class="p-2.5 rounded-lg bg-slate-900 border border-emerald-500/25 flex items-center justify-between gap-2">
                                     <span class="text-emerald-400/90">Weekend B-Double</span>
                                     <span id="effWeekendBD" class="font-bold text-emerald-300">$60.00/hr</span>
                                 </div>
@@ -405,9 +408,9 @@
                         </div>
 
                         <!-- Auto-Weekend Detection Setting -->
-                        <div class="flex items-center justify-between pt-1">
+                        <div class="flex items-center justify-between gap-3 pt-1">
                             <span class="text-xs font-medium text-slate-300">Auto-detect Sat & Sun for Weekend Top-Up</span>
-                            <label class="relative inline-flex items-center cursor-pointer">
+                            <label class="relative inline-flex items-center cursor-pointer shrink-0">
                                 <input type="checkbox" id="autoWeekendSetting" checked class="sr-only peer">
                                 <div class="w-10 h-6 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 peer-checked:after:bg-white"></div>
                             </label>
@@ -418,13 +421,13 @@
 
             <!-- Right Column (7 cols on lg): Shift History Log -->
             <div class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
-                <div class="px-5 py-4 bg-slate-850 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div class="px-4 sm:px-5 py-3.5 sm:py-4 bg-slate-850 border-b border-slate-800 flex flex-wrap items-center justify-between gap-2.5">
                     <div>
                         <h2 class="text-base font-bold text-white">Shift History Log</h2>
                         <p id="historySubtitle" class="text-xs text-slate-400">Showing shifts for selected period</p>
                     </div>
                     <div class="flex items-center gap-2">
-                        <label class="inline-flex items-center gap-1.5 text-xs text-slate-300 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 cursor-pointer select-none">
+                        <label class="inline-flex items-center gap-2 text-xs text-slate-300 bg-slate-900 px-3 py-2 rounded-lg border border-slate-800 cursor-pointer select-none">
                             <input type="checkbox" id="filterBDOnly" class="rounded accent-amber-500">
                             <span>B-Double Only</span>
                         </label>
@@ -441,8 +444,8 @@
     </main>
 
     <!-- Custom Reset Confirmation Modal (No alert/confirm used) -->
-    <div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+    <div id="resetModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-4 my-auto">
             <div class="flex items-center gap-3 text-rose-400">
                 <div class="w-10 h-10 rounded-full bg-rose-500/15 flex items-center justify-center shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -452,11 +455,11 @@
             <p class="text-sm text-slate-300 leading-relaxed">
                 This will permanently delete all recorded shifts from your account and device storage. Your saved pay rates will remain intact. Consider exporting a CSV backup first.
             </p>
-            <div class="flex items-center justify-end gap-2.5 pt-2">
-                <button type="button" id="btnCancelReset" class="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold transition">
+            <div class="flex flex-col-reverse sm:flex-row sm:items-center justify-end gap-2 sm:gap-2.5 pt-2">
+                <button type="button" id="btnCancelReset" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-semibold transition">
                     Cancel
                 </button>
-                <button type="button" id="btnConfirmReset" class="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-bold shadow-lg shadow-rose-600/20 transition">
+                <button type="button" id="btnConfirmReset" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-bold shadow-lg shadow-rose-600/20 transition">
                     Delete All Shifts
                 </button>
             </div>
@@ -464,26 +467,26 @@
     </div>
 
     <!-- Account & Cloud Backup Settings Modal -->
-    <div id="accountModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-5">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3.5">
-                <div class="flex items-center gap-2.5">
+    <div id="accountModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl space-y-5 my-auto">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3.5 gap-2">
+                <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-9 h-9 rounded-xl bg-amber-500/15 text-amber-400 flex items-center justify-center shrink-0">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
                     </div>
-                    <div>
-                        <h3 class="text-base font-bold text-white">Account & Cloud Sync</h3>
-                        <p class="text-xs text-slate-400">Save shifts & rates to your account</p>
+                    <div class="min-w-0">
+                        <h3 class="text-base font-bold text-white truncate">Account & Cloud Sync</h3>
+                        <p class="text-xs text-slate-400 truncate">Save shifts & rates to your account</p>
                     </div>
                 </div>
-                <button type="button" id="btnCloseAccountModal" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
+                <button type="button" id="btnCloseAccountModal" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
             </div>
 
             <!-- Connection Status Card -->
             <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between gap-2">
                     <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Sync Status</span>
                     <span id="cloudStatusBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300">Connecting...</span>
                 </div>
@@ -496,7 +499,7 @@
             <!-- Google Sign-In / Sign-Out Action -->
             <div class="space-y-2.5">
                 <button type="button" id="btnGoogleSignIn" class="w-full py-3 px-4 rounded-xl bg-white hover:bg-slate-100 active:scale-[0.99] text-slate-900 font-bold text-sm shadow-md transition flex items-center justify-center gap-2.5">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24">
+                    <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/>
                         <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/>
                         <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/>
@@ -509,6 +512,15 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
                     <span>Backup Local Shifts to Cloud Now</span>
                 </button>
+
+                <button type="button" id="btnExportCsv" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    <span>Export Shifts to CSV</span>
+                </button>
             </div>
 
             <p class="text-[11px] text-slate-400 leading-relaxed">
@@ -516,13 +528,13 @@
             </p>
 
             <!-- Danger Zone: Reset All Shift Data -->
-            <div class="pt-3 border-t border-slate-800 flex items-center justify-between gap-3">
+            <div class="pt-3 border-t border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <div class="text-xs font-bold text-rose-400">Danger Zone</div>
                     <div class="text-[11px] text-slate-400">Permanently clear all logged shifts</div>
                 </div>
-                <button type="button" id="btnOpenReset" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 hover:text-rose-200 text-xs font-bold border border-rose-800/70 transition shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <button type="button" id="btnOpenReset" class="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-rose-950/60 hover:bg-rose-900/80 text-rose-300 hover:text-rose-200 text-xs font-bold border border-rose-800/70 transition shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="3 6 5 6 21 6"/>
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                     </svg>
@@ -1603,10 +1615,11 @@
                     btn.addEventListener('click', () => {
                         state.period = btn.dataset.period;
                         el.periodBtns.forEach(b => {
+                            const spanClass = b.dataset.period === 'all' ? 'col-span-2 sm:col-span-1 ' : '';
                             if (b.dataset.period === state.period) {
-                                b.className = 'period-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 shadow-sm';
+                                b.className = `period-btn ${spanClass}px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 shadow-sm text-center`;
                             } else {
-                                b.className = 'period-btn px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800';
+                                b.className = `period-btn ${spanClass}px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800 text-center`;
                             }
                         });
                         renderDashboard();
