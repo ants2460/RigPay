@@ -512,6 +512,23 @@
                 </button>
             </div>
 
+            <!-- Pay Cycle Preference: Start of Week -->
+            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3">
+                <div class="min-w-0">
+                    <label for="weekStartDaySelect" class="block text-xs font-bold text-white">Pay Week Starts On</label>
+                    <p class="text-[11px] text-slate-400">Sets week &amp; fortnight pay cycle boundaries</p>
+                </div>
+                <select id="weekStartDaySelect" class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-slate-100 text-xs font-semibold focus:outline-none focus:border-amber-500 shrink-0">
+                    <option value="1">Monday</option>
+                    <option value="2">Tuesday</option>
+                    <option value="3">Wednesday</option>
+                    <option value="4">Thursday</option>
+                    <option value="5">Friday</option>
+                    <option value="6">Saturday</option>
+                    <option value="0">Sunday</option>
+                </select>
+            </div>
+
             <p class="text-[11px] text-slate-400 leading-relaxed">
                 All shifts and pay rates are automatically backed up to your account whenever you add, edit, or update rates, and any existing device shifts merge seamlessly when you sign in.
             </p>
@@ -572,8 +589,12 @@
                 normalRate: 36.00,
                 bDoubleRate: 6.00,
                 weekendRate: 18.00,
-                autoWeekend: true
+                autoWeekend: true,
+                weekStartDay: 1 // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
             };
+
+            const DAY_SHORT_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const DAY_FULL_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
             // Application State
             let state = {
@@ -613,6 +634,7 @@
                 btnGoogleSignIn: document.getElementById('btnGoogleSignIn'),
                 btnGoogleSignInText: document.getElementById('btnGoogleSignInText'),
                 btnSyncNow: document.getElementById('btnSyncNow'),
+                weekStartDaySelect: document.getElementById('weekStartDaySelect'),
 
                 // Summary & Filters
                 periodRangeLabel: document.getElementById('periodRangeLabel'),
@@ -873,7 +895,10 @@
                             normalRate: Number.isFinite(data.normalRate) ? data.normalRate : state.rates.normalRate,
                             bDoubleRate: Number.isFinite(data.bDoubleRate) ? data.bDoubleRate : state.rates.bDoubleRate,
                             weekendRate: Number.isFinite(data.weekendRate) ? data.weekendRate : state.rates.weekendRate,
-                            autoWeekend: typeof data.autoWeekend === 'boolean' ? data.autoWeekend : state.rates.autoWeekend
+                            autoWeekend: typeof data.autoWeekend === 'boolean' ? data.autoWeekend : state.rates.autoWeekend,
+                            weekStartDay: Number.isInteger(data.weekStartDay) && data.weekStartDay >= 0 && data.weekStartDay <= 6
+                                ? data.weekStartDay
+                                : state.rates.weekStartDay
                         };
                         saveLocalCache();
                         const activeEl = document.activeElement;
@@ -1030,33 +1055,37 @@
                 };
             }
 
-            // Date Period Filtering Logic (Monday-Sunday weeks)
+            // Date Period Filtering Logic (Uses customizable weekStartDay)
             function getPeriodBounds(periodKey) {
                 const now = new Date();
                 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                // Convert JS Sunday=0..Saturday=6 to Monday=0..Sunday=6
-                const dayIdx = (today.getDay() + 6) % 7;
+                const weekStart = Number.isInteger(state.rates.weekStartDay) ? state.rates.weekStartDay : 1;
+                const weekEnd = (weekStart + 6) % 7;
+                const rangeSpanLabel = `${DAY_SHORT_NAMES[weekStart]} – ${DAY_SHORT_NAMES[weekEnd]}`;
+
+                // Days elapsed since configured weekStart (0..6)
+                const diffFromStart = (today.getDay() - weekStart + 7) % 7;
 
                 const startOfThisWeek = new Date(today);
-                startOfThisWeek.setDate(today.getDate() - dayIdx);
+                startOfThisWeek.setDate(today.getDate() - diffFromStart);
 
                 const endOfThisWeek = new Date(startOfThisWeek);
                 endOfThisWeek.setDate(startOfThisWeek.getDate() + 6);
 
                 if (periodKey === 'this_week') {
-                    return { start: startOfThisWeek, end: endOfThisWeek, label: 'Current Week (Mon – Sun)' };
+                    return { start: startOfThisWeek, end: endOfThisWeek, label: `Current Week (${rangeSpanLabel})` };
                 }
                 if (periodKey === 'last_week') {
                     const start = new Date(startOfThisWeek);
                     start.setDate(start.getDate() - 7);
                     const end = new Date(endOfThisWeek);
                     end.setDate(end.getDate() - 7);
-                    return { start, end, label: 'Last Week (Mon – Sun)' };
+                    return { start, end, label: `Last Week (${rangeSpanLabel})` };
                 }
                 if (periodKey === 'fortnight') {
                     const start = new Date(startOfThisWeek);
                     start.setDate(start.getDate() - 7);
-                    return { start, end: endOfThisWeek, label: 'Last 14 Days / Current Fortnight' };
+                    return { start, end: endOfThisWeek, label: `Current Fortnight (${rangeSpanLabel})` };
                 }
                 if (periodKey === 'this_month') {
                     const start = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -1092,6 +1121,10 @@
                     el.rateWeekend.value = Number(state.rates.weekendRate || 0).toFixed(2);
                 }
                 el.autoWeekendSetting.checked = state.rates.autoWeekend;
+                if (el.weekStartDaySelect) {
+                    const startDay = Number.isInteger(state.rates.weekStartDay) ? state.rates.weekStartDay : 1;
+                    el.weekStartDaySelect.value = String(startDay);
+                }
 
                 const base = Math.max(0, parseFloat(state.rates.normalRate) || 0);
                 const bd = Math.max(0, parseFloat(state.rates.bDoubleRate) || 0);
@@ -1659,6 +1692,15 @@
 
                 el.btnSyncNow.addEventListener('click', () => {
                     uploadAllLocalShiftsToCloud(true);
+                });
+
+                // Start of Pay Week Selector
+                el.weekStartDaySelect.addEventListener('change', () => {
+                    const parsedDay = parseInt(el.weekStartDaySelect.value, 10);
+                    state.rates.weekStartDay = (parsedDay >= 0 && parsedDay <= 6) ? parsedDay : 1;
+                    saveRates();
+                    renderDashboard();
+                    showToast(`Pay week now starts on ${DAY_FULL_NAMES[state.rates.weekStartDay]}`);
                 });
 
                 // Reset Modal Handlers
