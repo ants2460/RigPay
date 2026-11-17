@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -141,6 +140,122 @@
                     <span class="w-7 h-7 rounded-lg bg-purple-500/15 text-purple-400 flex items-center justify-center text-[11px] font-extrabold shrink-0">WK</span>
                 </div>
                 <div id="kpiWeekendHours" class="text-2xl sm:text-3xl font-extrabold text-purple-400 tabular-nums truncate">0.00 hrs</div>
+                <div id="kpiWeekendAllowance" class="text-xs text-slate-400 mt-1 tabular-nums">+$0.00 wknd extra</div>
+            </div>
+        </section>
+
+        <!-- Main 2-Column Workspace -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
+
+            <!-- Left Column (5 cols on lg): Shift Entry Form + Pay Rates -->
+            <div class="lg:col-span-5 space-y-5 sm:space-y-6">
+
+                <!-- 1. Log / Edit Shift Card -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="px-4 sm:px-5 py-3.5 sm:py-4 bg-slate-850 border-b border-slate-800 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <span class="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0"></span>
+                            <h2 id="formTitle" class="text-base font-bold text-white truncate">Log New Shift</h2>
+                        </div>
+                        <button type="button" id="btnCancelEdit" class="hidden text-xs font-bold text-rose-400 hover:text-rose-300 bg-rose-500/10 px-2.5 py-1 rounded-lg border border-rose-500/20 transition shrink-0">
+                            Cancel Edit
+                        </button>
+                    </div>
+
+                    <form id="shiftForm" class="p-4 sm:p-5 space-y-4">
+                        <input type="hidden" id="editShiftId" value="">
+
+                        <!-- Date & Weekend Toggle -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="space-y-1.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label for="shiftDate" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Shift Date</label>
+                                    <span id="dayOfWeekBadge" class="text-[11px] font-bold text-amber-400">Today</span>
+                                </div>
+                                <input type="date" id="shiftDate" required class="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white font-semibold text-sm focus:outline-none focus:border-amber-500 transition">
+                            </div>
+
+                            <!-- Weekend Rate Toggle Box -->
+                            <div class="space-y-1.5">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Day Rate</span>
+                                    <span id="weekendAutoTag" class="hidden text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">Weekend +$</span>
+                                </div>
+                                <label class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 cursor-pointer select-none">
+                                    <span class="text-xs font-bold text-purple-300">Weekend Shift</span>
+                                    <input type="checkbox" id="isWeekendToggle" class="w-4 h-4 rounded accent-purple-500 cursor-pointer">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Optional Start / Finish Time Calculator -->
+                        <div class="rounded-xl bg-slate-950/80 border border-slate-800/90 p-3 space-y-2.5">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Quick Time Calculator (Optional)</span>
+                                <span class="text-[11px] text-slate-500">Auto-fills hours</span>
+                            </div>
+                            <div class="grid grid-cols-1 min-[400px]:grid-cols-3 gap-2">
+                                <div>
+                                    <label for="startTime" class="block text-[11px] text-slate-400 mb-1">Start</label>
+                                    <input type="time" id="startTime" class="time-calc-input w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-semibold focus:border-amber-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="endTime" class="block text-[11px] text-slate-400 mb-1">Finish</label>
+                                    <input type="time" id="endTime" class="time-calc-input w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-semibold focus:border-amber-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label for="breakMinutes" class="block text-[11px] text-slate-400 mb-1">Unpaid Break (m)</label>
+                                    <input type="number" id="breakMinutes" min="0" max="480" step="5" value="30" inputmode="numeric" class="time-calc-input w-full px-2.5 py-2 rounded-lg bg-slate-900 border border-slate-700 text-slate-200 text-xs font-semibold tabular-nums focus:border-amber-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Hours Worked -->
+                        <div class="space-y-1.5">
+                            <div class="flex items-center justify-between gap-2">
+                                <label for="totalHours" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Hours Worked</label>
+                                <label class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-700/90 hover:border-amber-500/50 cursor-pointer select-none transition">
+                                    <input type="checkbox" id="deductHalfHrLunch" class="w-3.5 h-3.5 rounded accent-amber-500 cursor-pointer">
+                                    <span class="text-[11px] font-bold text-amber-300">-30m Lunch Break</span>
+                                </label>
+                            </div>
+                            <div class="relative">
+                                <input type="number" id="totalHours" step="0.01" min="0.01" max="24" required inputmode="decimal" placeholder="e.g. 11.5" class="w-full px-3.5 py-3 pr-16 rounded-xl bg-slate-950 border border-slate-700 text-white font-extrabold text-base tabular-nums focus:outline-none focus:border-amber-500 transition">
+                                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-500">HOURS</span>
+                            </div>
+                        </div>
+
+                        <!-- B-Double Toggle & B-Double Hours Box -->
+                        <div id="bDoubleBox" class="rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <div class="text-sm font-bold text-amber-300">Drove B-Double?</div>
+                                    <div class="text-xs text-slate-400">Adds B-Double hourly allowance</div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" id="droveBDoubleToggle" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-slate-300 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500 peer-checked:after:bg-slate-950"></div>
+                                </label>
+                            </div>
+
+                            <!-- Collapsible B-Double Hours Input -->
+                            <div id="bDoubleHoursWrapper" class="hidden pt-2 border-t border-slate-800/90 space-y-2">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label for="bDoubleHours" class="text-xs font-semibold text-amber-200">B-Double Hours Worked</label>
+                                    <button type="button" id="btnAllHoursBD" class="text-[11px] font-bold text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 px-2.5 py-1 rounded-lg border border-amber-500/30 transition">
+                                        Same as Total Hours
+                                    </button>
+                                </div>
+                                <div class="relative">
+                                    <input type="number" id="bDoubleHours" step="0.01" min="0" max="24" inputmode="decimal" placeholder="e.g. 8.0" class="w-full px-3.5 py-2.5 pr-16 rounded-xl bg-slate-900 border border-amber-500/40 text-amber-300 font-extrabold text-sm tabular-nums focus:outline-none focus:border-amber-400 transition">
+                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-amber-500/70">BD HRS</span>
+                                </div>
+                                <p id="bdValidationMsg" class="hidden text-xs text-rose-400 font-medium">B-Double hours cannot exceed Total Hours Worked.</p>
+                            </div>
+                        </div>
+
+                        <!-- Optional Notes / Route / Load -->
+                        <divclass="text-2xl sm:text-3xl font-extrabold text-purple-400 tabular-nums truncate">0.00 hrs</div>
                 <div id="kpiWeekendAllowance" class="text-xs text-slate-400 mt-1 tabular-nums">+$0.00 wknd extra</div>
             </div>
         </section>
