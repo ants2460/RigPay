@@ -1152,6 +1152,469 @@
             updateAccountModalUI();
             renderDashboard();
 
+            // Modal & Interactive Event Bindings
+            el.btnOpenAccountSettings.addEventListener('click', () => {
+                el.accountModal.classList.remove('hidden');
+                el.accountModal.classList.add('flex');
+            });
+
+            el.btnCloseAccountModal.addEventListener('click', () => {
+                el.accountModal.classList.add('hidden');
+                el.accountModal.classList.remove('flex');
+            });
+
+            el.accountModal.addEventListener('click', (e) => {
+                if (e.target === el.accountModal) {
+                    el.accountModal.classList.add('hidden');
+                    el.accountModal.classList.remove('flex');
+                }
+            });
+
+            el.btnGoogleSignIn.addEventListener('click', handleGoogleButtonClick);
+
+            el.btnCancelInlineGoogle.addEventListener('click', () => {
+                el.inlineGoogleForm.classList.add('hidden');
+            });
+
+            el.btnConfirmInlineGoogle.addEventListener('click', () => {
+                const name = el.inlineGoogleName.value.trim() || 'Driver';
+                const email = el.inlineGoogleEmail.value.trim() || 'driver@gmail.com';
+                localGoogleProfile = { name, email, uid: 'local_google_' + Date.now() };
+                saveLocalCache();
+                updateAccountModalUI();
+                el.inlineGoogleForm.classList.add('hidden');
+                showToast(`Connected Google account (${email}) & backed up shifts!`);
+            });
+
+            el.btnSyncNow.addEventListener('click', () => {
+                uploadAllLocalShiftsToCloud(true);
+            });
+
+            el.btnExportCsv.addEventListener('click', () => {
+                if (state.shifts.length === 0) {
+                    showToast('No shifts to export', 'error');
+                    return;
+                }
+                let csv = 'Date,Day,TotalHours,BDoubleHours,IsWeekend,BasePayAUD,B_DoubleExtraAUD,WeekendExtraAUD,TotalPayAUD,Notes\n';
+                state.shifts.forEach(s => {
+                    const th = Number(s.totalHours) || 0;
+                    const bdh = Number(s.bDoubleHours) || 0;
+                    const isWk = Boolean(s.isWeekend);
+                    const calc = calculateShiftPay(th, bdh, isWk);
+                    const d = parseLocalDate(s.date);
+                    const dayName = d.toLocaleDateString('en-AU', { weekday: 'long' });
+                    csv += `"${s.date}","${dayName}",${th},${bdh},${isWk},${calc.basePay.toFixed(2)},${calc.bdPay.toFixed(2)},${calc.wkndPay.toFixed(2)},${calc.totalPay.toFixed(2)},"${(s.notes || '').replace(/"/g, '""')}"\n`;
+                });
+                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `RigPay_Shifts_Export_${getTodayISO()}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showToast('Shift CSV exported successfully');
+            });
+
+            el.btnExportBackupJson.addEventListener('click', () => {
+                const backupObj = {
+                    version: 2,
+                    app: 'RigPay',
+                    exportedAt: new Date().toISOString(),
+                    rates: state.rates,
+                    shifts: state.shifts
+                };
+                const blob = new Blob([JSON.stringify(backupObj, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `RigPay_Backup_${getTodayISO()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showToast('Backup JSON file saved');
+            });
+
+            el.inputRestoreBackupJson.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    try {
+                        const parsed = JSON.parse(evt.target.result);
+                        if (parsed && Array.isArray(parsed.shifts)) {
+                            state.shifts = parsed.shifts;
+                            if (parsed.rates) {
+                                state.rates = { ...DEFAULT_RATES, ...parsed.rates };
+                            }
+                            saveLocalCache();
+                            syncRatesUI();
+                            renderDashboard();
+                            uploadAllLocalShiftsToCloud(false);
+                            showToast(`Restored ${state.shifts.length} shifts successfully!`);
+                            el.accountModal.classList.add('hidden');
+                            el.accountModal.classList.remove('flex');
+                        } else {
+                            showToast('Invalid backup file structure', 'error');
+                        }
+                    } catch (err) {
+                        console.error('Restore parse error:', err);
+                        showToast('Could not read backup file', 'error');
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value = '';
+            });
+
+            el.weekStartDaySelect.addEventListener('change', (e) => {
+                state.rates.weekStartDay = parseInt(e.target.value, 10);
+                saveLocalCache();
+                uploadAllLocalShiftsToCloud(false);
+                renderDashboard();
+                showToast('Pay week start updated');
+            });
+
+            el.btnOpenReset.addEventListener('click', () => {
+                el.resetModal.classList.remove('hidden');
+                el.resetModal.classList.add('flex');
+            });
+
+            el.btnCancelReset.addEventListener('click', () => {
+                el.resetModal.classList.add('hidden');
+                el.resetModal.classList.remove('flex');
+            });
+
+            el.resetModal.addEventListener('click', (e) => {
+                if (e.target === el.resetModal) {
+                    el.resetModal.classList.add('hidden');
+                    el.resetModal.classList.remove('flex');
+                }
+            });
+
+            el.btnConfirmReset.addEventListener('click', async () => {
+                state.shifts = [];
+                saveLocalCache();
+                if (db && currentUser) {
+                    try {
+                        // Clear cloud shifts
+                        state.shifts.forEach(async (s) => {
+                            if (s && s.id) {
+                                await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'shifts', s.id));
+                            }
+                        });
+                    } catch (err) {
+                        console.error('Cloud reset error:', err);
+                    }
+                }
+                renderDashboard();
+                el.resetModal.classList.add('hidden');
+                el.resetModal.classList.remove('flex');
+                el.accountModal.classList.add('hidden');
+                el.accountModal.classList.remove('flex');
+                showToast('All shift data cleared');
+            });
+
+            // Date / Day detection & Auto-weekend detection
+            el.shiftDate.addEventListener('change', () => {
+                const val = el.shiftDate.value;
+                if (!val) return;
+                const d = parseLocalDate(val);
+                const dayName = d.toLocaleDateString('en-AU', { weekday: 'long' });
+                el.dayOfWeekBadge.textContent = dayName;
+
+                const dayIndex = d.getDay(); // 0 = Sun, 6 = Sat
+                const isSatSun = (dayIndex === 0 || dayIndex === 6);
+                if (state.rates.autoWeekend && isSatSun) {
+                    el.isWeekendToggle.checked = true;
+                    el.weekendAutoTag.classList.remove('hidden');
+                } else if (state.rates.autoWeekend) {
+                    el.isWeekendToggle.checked = false;
+                    el.weekendAutoTag.classList.add('hidden');
+                }
+                updateLivePreview();
+            });
+
+            el.isWeekendToggle.addEventListener('change', () => {
+                if (el.isWeekendToggle.checked) {
+                    el.weekendAutoTag.classList.remove('hidden');
+                } else {
+                    el.weekendAutoTag.classList.add('hidden');
+                }
+                updateLivePreview();
+            });
+
+            // Time Calculator helper toggle
+            el.btnToggleTimeCalc.addEventListener('click', () => {
+                el.timeCalcPanel.classList.toggle('hidden');
+            });
+
+            el.btnApplyTimeCalc.addEventListener('click', () => {
+                const start = el.calcStart.value;
+                const end = el.calcEnd.value;
+                const breakMins = parseFloat(el.calcBreak.value) || 0;
+                if (!start || !end) return;
+
+                const [sh, sm] = start.split(':').map(Number);
+                const [eh, em] = end.split(':').map(Number);
+
+                let startMin = sh * 60 + sm;
+                let endMin = eh * 60 + em;
+                if (endMin <= startMin) {
+                    endMin += 24 * 60; // Overnight shift
+                }
+                const workedMins = (endMin - startMin) - breakMins;
+                const totalH = Math.max(0.25, Math.round((workedMins / 60) * 100) / 100);
+
+                el.totalHours.value = totalH;
+                el.timeCalcPanel.classList.add('hidden');
+                updateLivePreview();
+                showToast(`Applied ${totalH} hours from start/finish`);
+            });
+
+            // B-Double Toggle
+            el.droveBDoubleToggle.addEventListener('change', () => {
+                if (el.droveBDoubleToggle.checked) {
+                    el.bDoubleHoursWrapper.classList.remove('hidden');
+                    const th = parseFloat(el.totalHours.value) || 0;
+                    if (th > 0 && !el.bDoubleHours.value) {
+                        el.bDoubleHours.value = th;
+                    }
+                    el.bDoubleBox.className = "rounded-xl bg-slate-950/90 border border-amber-500/50 p-3.5 space-y-3 transition-colors";
+                } else {
+                    el.bDoubleHoursWrapper.classList.add('hidden');
+                    el.bDoubleHours.value = '';
+                    el.bdValidationMsg.classList.add('hidden');
+                    el.bDoubleBox.className = "rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors";
+                }
+                updateLivePreview();
+            });
+
+            el.btnAllShiftBD.addEventListener('click', () => {
+                const th = parseFloat(el.totalHours.value) || 0;
+                el.bDoubleHours.value = th;
+                el.bdValidationMsg.classList.add('hidden');
+                updateLivePreview();
+            });
+
+            el.totalHours.addEventListener('input', () => {
+                if (el.droveBDoubleToggle.checked) {
+                    const th = parseFloat(el.totalHours.value) || 0;
+                    const bdh = parseFloat(el.bDoubleHours.value) || 0;
+                    if (bdh > th) {
+                        el.bDoubleHours.value = th;
+                    }
+                }
+                updateLivePreview();
+            });
+
+            el.bDoubleHours.addEventListener('input', () => {
+                const th = parseFloat(el.totalHours.value) || 0;
+                const bdh = parseFloat(el.bDoubleHours.value) || 0;
+                if (bdh > th) {
+                    el.bdValidationMsg.classList.remove('hidden');
+                } else {
+                    el.bdValidationMsg.classList.add('hidden');
+                }
+                updateLivePreview();
+            });
+
+            // Live rate inputs
+            document.querySelectorAll('.rate-input').forEach(input => {
+                input.addEventListener('input', () => {
+                    state.rates.rateNormal = parseFloat(el.rateNormal.value) || 0;
+                    state.rates.rateBDouble = parseFloat(el.rateBDouble.value) || 0;
+                    state.rates.rateWeekend = parseFloat(el.rateWeekend.value) || 0;
+                    saveLocalCache();
+                    uploadAllLocalShiftsToCloud(false);
+                    syncRatesUI();
+                });
+            });
+
+            el.autoWeekendSetting.addEventListener('change', () => {
+                state.rates.autoWeekend = el.autoWeekendSetting.checked;
+                saveLocalCache();
+                uploadAllLocalShiftsToCloud(false);
+                const d = parseLocalDate(el.shiftDate.value);
+                if (d) {
+                    const dayIndex = d.getDay();
+                    if (state.rates.autoWeekend && (dayIndex === 0 || dayIndex === 6)) {
+                        el.isWeekendToggle.checked = true;
+                        el.weekendAutoTag.classList.remove('hidden');
+                    } else if (state.rates.autoWeekend) {
+                        el.isWeekendToggle.checked = false;
+                        el.weekendAutoTag.classList.add('hidden');
+                    }
+                }
+                updateLivePreview();
+            });
+
+            // Shift form submission
+            el.shiftForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const date = el.shiftDate.value;
+                const totalHours = parseFloat(el.totalHours.value);
+                if (!date || isNaN(totalHours) || totalHours <= 0) {
+                    showToast('Please enter a valid date and hours worked', 'error');
+                    return;
+                }
+
+                const droveBD = el.droveBDoubleToggle.checked;
+                let bDoubleHours = droveBD ? (parseFloat(el.bDoubleHours.value) || 0) : 0;
+                if (bDoubleHours > totalHours) bDoubleHours = totalHours;
+
+                const isWeekend = el.isWeekendToggle.checked;
+                const notes = el.shiftNotes.value.trim();
+                const editId = el.editShiftId.value;
+
+                if (editId) {
+                    const idx = state.shifts.findIndex(s => s.id === editId);
+                    if (idx !== -1) {
+                        state.shifts[idx] = {
+                            ...state.shifts[idx],
+                            date,
+                            totalHours,
+                            bDoubleHours,
+                            isWeekend,
+                            notes,
+                            updatedAt: Date.now()
+                        };
+                    }
+                    showToast('Shift updated successfully');
+                } else {
+                    const newShift = {
+                        id: 'shift_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                        date,
+                        totalHours,
+                        bDoubleHours,
+                        isWeekend,
+                        notes,
+                        createdAt: Date.now()
+                    };
+                    state.shifts.push(newShift);
+                    showToast('Shift logged successfully');
+                }
+
+                saveLocalCache();
+                uploadAllLocalShiftsToCloud(false);
+                resetShiftForm();
+                renderDashboard();
+            });
+
+            el.btnCancelEdit.addEventListener('click', () => {
+                resetShiftForm();
+            });
+
+            function resetShiftForm() {
+                state.editingId = null;
+                el.editShiftId.value = '';
+                el.formTitle.textContent = 'Log Daily Shift';
+                el.btnSaveShiftText.textContent = 'Save Shift Log';
+                el.btnCancelEdit.classList.add('hidden');
+                el.shiftDate.value = getTodayISO();
+                el.totalHours.value = '';
+                el.droveBDoubleToggle.checked = false;
+                el.bDoubleHoursWrapper.classList.add('hidden');
+                el.bDoubleHours.value = '';
+                el.bDoubleBox.className = "rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors";
+                el.isWeekendToggle.checked = false;
+                el.weekendAutoTag.classList.add('hidden');
+                el.shiftNotes.value = '';
+                el.bdValidationMsg.classList.add('hidden');
+
+                const d = parseLocalDate(el.shiftDate.value);
+                const dayName = d.toLocaleDateString('en-AU', { weekday: 'long' });
+                el.dayOfWeekBadge.textContent = dayName;
+                updateLivePreview();
+            }
+
+            // Period filter buttons
+            el.periodButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    el.periodButtons.forEach(b => {
+                        b.className = 'period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition text-slate-300 hover:bg-slate-800 text-center';
+                    });
+                    btn.className = 'period-btn px-2.5 sm:px-3 py-2 sm:py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 shadow-sm text-center';
+                    state.currentPeriod = btn.getAttribute('data-period');
+                    
+                    const titles = {
+                        'this_week': 'Showing current week',
+                        'last_week': 'Showing last week',
+                        'fortnight': 'Showing 14-day pay period',
+                        'this_month': 'Showing current calendar month',
+                        'all': 'Showing all recorded shift history'
+                    };
+                    el.periodRangeLabel.textContent = titles[state.currentPeriod] || '';
+                    el.historySubtitle.textContent = titles[state.currentPeriod] || '';
+                    renderDashboard();
+                });
+            });
+
+            el.filterBDOnly.addEventListener('change', () => {
+                state.filterBDOnly = el.filterBDOnly.checked;
+                renderDashboard();
+            });
+
+            // Shift list actions (Edit / Delete)
+            el.shiftListContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('button[data-action]');
+                if (!btn) return;
+                const action = btn.getAttribute('data-action');
+                const id = btn.getAttribute('data-id');
+
+                if (action === 'delete') {
+                    const idx = state.shifts.findIndex(s => s.id === id);
+                    if (idx !== -1) {
+                        state.shifts.splice(idx, 1);
+                        saveLocalCache();
+                        if (db && currentUser) {
+                            deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'shifts', id)).catch(err => console.error('Delete shift sync error:', err));
+                        }
+                        renderDashboard();
+                        showToast('Shift deleted');
+                    }
+                } else if (action === 'edit') {
+                    const shift = state.shifts.find(s => s.id === id);
+                    if (shift) {
+                        state.editingId = shift.id;
+                        el.editShiftId.value = shift.id;
+                        el.formTitle.textContent = 'Edit Shift Log';
+                        el.btnSaveShiftText.textContent = 'Update Shift Log';
+                        el.btnCancelEdit.classList.remove('hidden');
+
+                        el.shiftDate.value = shift.date;
+                        const d = parseLocalDate(shift.date);
+                        el.dayOfWeekBadge.textContent = d.toLocaleDateString('en-AU', { weekday: 'long' });
+
+                        el.totalHours.value = shift.totalHours;
+                        const hasBD = Number(shift.bDoubleHours || 0) > 0;
+                        el.droveBDoubleToggle.checked = hasBD;
+                        if (hasBD) {
+                            el.bDoubleHoursWrapper.classList.remove('hidden');
+                            el.bDoubleHours.value = shift.bDoubleHours;
+                            el.bDoubleBox.className = "rounded-xl bg-slate-950/90 border border-amber-500/50 p-3.5 space-y-3 transition-colors";
+                        } else {
+                            el.bDoubleHoursWrapper.classList.add('hidden');
+                            el.bDoubleHours.value = '';
+                            el.bDoubleBox.className = "rounded-xl bg-slate-950/90 border border-slate-800 p-3.5 space-y-3 transition-colors";
+                        }
+
+                        el.isWeekendToggle.checked = Boolean(shift.isWeekend);
+                        if (shift.isWeekend) {
+                            el.weekendAutoTag.classList.remove('hidden');
+                        } else {
+                            el.weekendAutoTag.classList.add('hidden');
+                        }
+                        el.shiftNotes.value = shift.notes || '';
+                        updateLivePreview();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                }
+            });
+
+            // Initialize initial date badge
+            const initialDateObj = parseLocalDate(el.shiftDate.value);
+            el.dayOfWeekBadge.textContent = initialDateObj.toLocaleDateString('en-AU', { weekday: 'long' });
+            updateLivePreview();
         })();
     </script>
 </body>
